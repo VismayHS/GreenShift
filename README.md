@@ -21,6 +21,16 @@ python -m venv .venv
 .venv\Scripts\python scripts\generate_tpcds.py --sf 1
 ```
 
+## Site (story + Tonight view)
+
+```bash
+python scripts/export_site_data.py      # pipeline results -> frontend/public/data/ (also stores a 48 h forecast for offline use)
+cd frontend && npx npm@11 install       # npm 10.8 on Ubuntu 24.04 crashes on this tree; npm 11 works
+npm run dev                             # or: npm run build && npx vite preview
+```
+
+The story page explains the method with our own data; the Tonight view plans the coming 22:00 to 07:00 window from the live Carbon Intensity API forecast, falling back to the stored copy (labelled) when offline. Savings stay marked as pending until the backtest (HANDOFF §8 step 8) exports them.
+
 ## Data
 
 | Dataset | Licence | Data card |
