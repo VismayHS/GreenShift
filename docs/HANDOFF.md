@@ -55,17 +55,45 @@ This file holds everything researched, decided, built and measured so far, plus 
 | # | Step | Status |
 |---|---|---|
 | 1 | Research (data sources, energy measurement, literature, TPC-DS, Spark compat) | ✅ |
-| 2 | Environment (Spark 4.2 + JDK 21 + venv) | ✅ Windows. Redo on the new system (§7) |
-| 3 | Carbon-data fetcher (GB API + NESO) | ✅ National + regions 1-7 committed (2024-25). Regions 8-14 and the NESO CSV skipped as optional; fetch later with `--regions 13 14 --skip-neso` if needed |
-| 4 | Energy meter (RAPL / battery / model + Spark metrics) | ✅ tested on Windows. Linux RAPL reader written, **untested** |
-| 5 | TPC-DS data generation + Spark compatibility | ✅ SF1; **99/99 queries run** |
-| 6 | Carbon data cleaning + EDA | ⏳ next |
-| 7 | Job catalogue + measurement campaign | ⏳ |
+| 2 | Environment (Spark 4.2 + JDK 21 + venv) | ✅ Windows. ✅ Linux (2026-10-27, see below) |
+| 3 | Carbon-data fetcher (GB API + NESO) | ✅ National + regions 1-7 committed (2024-25; regions re-fetched 2026-10-27 after the New Year fix). NESO CSV downloaded 2026-10-27 (git-ignored, SHA-256 `424ca3ff2160…`). Regions 8-14 optional: `--regions 13 14 --skip-neso` |
+| 4 | Energy meter (RAPL / battery / model + Spark metrics) | ✅ tested on Windows. ✅ Linux RAPL reader tested (needs `sudo chmod` after each boot) |
+| 5 | TPC-DS data generation + Spark compatibility | ✅ SF1; **99/99 queries run** on Windows and on Linux |
+| 6 | Carbon data cleaning + EDA | ✅ `carbon/clean.py`, `scripts/eda_carbon.py` (2026-10-27; findings below) |
+| 7 | Job catalogue + measurement campaign | ⏳ `configs/jobs.json` drafted (proposed jobs, window 22:00-07:00) |
 | 8 | Scheduler policies + backtest simulator | ⏳ |
 | 9 | Online scheduler + Airflow DAG | ⏳ |
-| 10 | Savings report | ⏳ |
+| 10 | Savings report | ⏳ Site in progress: `frontend/` (story + Tonight view) |
 | 11 | Tests | ⏳ |
 
+### Linux machine (set up 2026-10-27)
+
+| | |
+|---|---|
+| OS / hardware | Ubuntu 24.04.5 LTS, kernel 7.0.0-38, bare metal (`systemd-detect-virt`: none). Intel i5-12450H (8 cores / 12 threads), the same CPU as the Windows laptop. 15 GiB RAM + 4 GiB swap, 28 GB free disk |
+| Java | OpenJDK **21.0.12.1** (apt `openjdk-21-jdk`) for Spark; `env.py` finds it under `/usr/lib/jvm/java-21-openjdk*`. OpenJDK 11 is **kept** because Hadoop uses it (`hadoop-env.sh` and `~/.bashrc` `JAVA_HOME`) |
+| Spark | **pyspark 4.2.0** in `.venv` (Python 3.12.3). There is no separate Spark install. An old user-level pip `pyspark 3.5.1` (in `~/.local`) was uninstalled so the project runs one Spark version |
+| Hadoop | 3.3.6 at `~/hadoop`, **single-node pseudo-distributed** (HDFS `localhost:9000`, replication 1, YARN). Daemons are not started by default (`start-dfs.sh`, `start-yarn.sh`) |
+| venv | duckdb 2.0.0, pandas 2.3.3, pyarrow 26.0.0, numpy 2.5.4, matplotlib 3.11.2, psutil 7.2.2, requests 2.34.2 |
+| RAPL | `/sys/class/powercap/intel-rapl:0` (package-0), `:0:0` (core), `:0:1` (uncore); no DRAM zone. The duplicate `intel-rapl-mmio:0` is not read, so there is no double counting. Files are root-only (`-r--------`): run `sudo chmod a+r /sys/class/powercap/intel-rapl:*/energy_uj` after every boot. Counter wraps at 262,143 J (handled) |
+| RAPL smoke test | Idle ≈ 9.9 W PKG (browser + VS Code open; Windows idle was 7.4 W). 12-process CPU burn, 5 s: RAPL 167.9 J (33.4 W), uncalibrated model 212.2 J. The model's default `p_max_w = 45` overestimates here, so **recalibrate on Linux** before using the model. Power profile was `balanced`; use `powerprofilesctl set performance` for measurements |
+| TPC-DS SF1 | dsdgen 2.4 s, same row counts as on Windows. **99/99** queries on Spark 4.2 local[*], 238 s in total. Heaviest: q72 10.4 · q14 8.6 · q04 8.3 · q23 6.6 · q78 6.3 · q88 6.1 s. Peak JVM RSS 7.0 GiB with `driver_memory=6g` |
+| Memory for SF choice | 15 GiB total; ~6 GiB used by desktop apps, leaving ~9 GiB available. → **SF5** per the §9 rule (SF10 needs ≥ 32 GB) |
+| Fixes made | `env.py` finds the Linux JDK 21. `register_tpcds()` uses an explicit `file://` root, because `HADOOP_CONF_DIR` (fs.defaultFS = hdfs://localhost:9000) otherwise sends local paths to HDFS |
+
+### Carbon EDA findings (2024-25, step 6)
+
+From `results/eda_carbon_summary.json`; figures in `report/figures/eda_*.png`.
+
+| | |
+|---|---|
+| Gaps | National: 74 forecast slots and 31 actual slots missing, in three source outages (11-12 Jun 2024, 12-13 Jan 2025, 10-11 Aug 2025); none ≤ 2 h, so none interpolated. Regions 1-7: 48 slots each (the same outages plus 2025-12-31 23:30). Re-querying the API returns nothing for these windows |
+| Fetch bug fixed | A regional request that crosses New Year stops at 31 Dec 23:00. The old 14-day chunk 2024-12-30 → 2025-01-13 lost 1-13 Jan 2025 (592 slots per region). `uk_api._chunks` now also breaks at 1 January; regions 1-7 were re-fetched (35,041 rows each) |
+| National level | Mean actual 127.1 gCO2/kWh. 22:00-07:00 UK local 116.7 vs 07:00-22:00 133.4. Weekday 133.9, weekend 110.2 |
+| Daily minimum | Falls between 22:00 and 07:00 UK local on 58.9% of days; otherwise mostly 11:00-15:00 (solar). In summer the midday low (~78 at 13:00) is well below the night (~102-110) |
+| Forecast error | National forecast vs actual (n = 35,014): MAE 9.72, bias −0.07, RMSE 13.65 gCO2/kWh. MAE is 7.6% of the mean, vs the 5% Wiesner et al. assumed for 2020 |
+| NESO cross-check | API actual vs NESO historic `CARBON_INTENSITY`: r = 0.993, MAE 4.66, NESO − API bias −1.74, 10% identical. Best alignment needs NESO `DATETIME` shifted back 30 min (UTC, labels period end; inferred from the data, not documented) |
+| Regions (mean forecast) | South Scotland 22.1 · North East England 24.9 · North Scotland 37.6 · North West England 50.4 · North Wales 82.3 · Yorkshire 143.4 · South Wales 251.7 |
 ---
 
 ## 3. Research findings
@@ -94,6 +122,7 @@ Region IDs: 1 North Scotland, 2 South Scotland, 3 North West England, 4 North Ea
 Gotchas we hit:
 - Some national rows have **no `forecast` key** (26 of 673 for 1-14 Jan 2025). The client uses `.get()`.
 - Regional pulls are a little short (656 of ~673 rows per 14 days). They must be re-gridded to 30 min and the gaps filled.
+- A regional request that crosses New Year silently stops at 31 Dec 23:00. The client now breaks chunks at 1 January (found 2026-10-27).
 - The first record returned starts 30 min before `from`, so chunk boundaries overlap. The client de-duplicates on `from`.
 - The index **numeric thresholds** are not in the API docs. They are in NESO's methodology PDF (`neso-ci-national-methodology_v2`). **TODO** if we use the index policy.
 
@@ -346,7 +375,7 @@ export CARBONSCHED_SPARK_MASTER=yarn           # spark_session() submits to YARN
 
 ## 8. Remaining work: detailed plan
 
-### Step 6: Carbon data cleaning + EDA → `src/carbonsched/carbon/clean.py`, `scripts/eda_carbon.py`
+### Step 6: Carbon data cleaning + EDA → `src/carbonsched/carbon/clean.py`, `scripts/eda_carbon.py` ✅ done 2026-10-27 (findings in §2)
 - Load the CSVs and reindex to a complete 30-min UTC grid. Interpolate gaps ≤ 2 h and flag longer ones. Fill missing national `forecast` from `actual` only for EDA, never for the decision signal.
 - Validate API `actual` vs NESO `CARBON_INTENSITY` (correlation, MAE).
 - Figures: mean CI by hour of day (UTC and UK local), by month/season, weekday vs weekend, per region (North Scotland vs London vs South Wales); forecast error (MAE, bias) of national forecast vs actual. That gives the **real** error to compare with Wiesner's 5% assumption.
@@ -398,15 +427,17 @@ Policy invariants: no deadline is missed; capacity is never exceeded; total ener
 ## 9. Open questions for the group
 
 - [ ] Can anyone get **Electricity Maps academic access**? If yes, add India South (`IN-SO`) as a second, higher-carbon region (a local angle for Bengaluru).
-- [ ] Nightly window convention: **release 22:00, deadline 07:00 UK local time**? (The code works in UTC; BST shifts it by 1 h.)
+- [x] Nightly window convention: **release 22:00, deadline 07:00 UK local time** (decided 2026-10-27). (The code works in UTC; BST shifts it by 1 h.)
 - [ ] Final scale factor: **SF10** if the new machine has ≥ 32 GB RAM, otherwise SF5.
 - [ ] Do we want the **live demo** (online scheduler launching real jobs at forecast-optimal times)?
-- [ ] Single-node vs multi-node Hadoop on the new system? This decides the energy attribution method (§7.3).
+- [x] Single-node vs multi-node Hadoop on the new system? **Single-node** (pseudo-distributed, checked 2026-10-27), so `EnergyMeter` on the one machine covers YARN runs too (§7.3).
 
 ---
 
 ## 10. Known issues & gotchas
 
+- **`HADOOP_CONF_DIR` redirects local paths to HDFS** on the Linux box (fs.defaultFS = hdfs://localhost:9000). Local paths given to Spark need a `file://` prefix; `register_tpcds()` adds one.
+- **RAPL permissions reset on reboot** on Linux: rerun the `sudo chmod` (§7.2) before each measurement session, otherwise `try_rapl()` quietly returns None and only the model is used.
 - **Campus Wi-Fi TLS interception** gave `CERTIFICATE_VERIFY_FAILED` mid-download. Rerun on another network; the fetcher resumes. Do not disable verification.
 - **Electricity Maps** pages return 403 without login, so a browser and an account are needed.
 - **Spaces in the Windows path** ("Semester 5") break pyspark's `find-spark-home.cmd`; `env.py` sets SPARK_HOME. Avoid spaces in the project path on the new system.
