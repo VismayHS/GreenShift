@@ -45,9 +45,12 @@ def _get(path: str, retries: int = 4) -> dict:
 
 
 def _chunks(start: datetime, end: datetime):
+    # Chunks also break at 1 January: a regional request that crosses New Year
+    # silently stops at 31 Dec 23:00 (seen 2026-10-27; lost 1-13 Jan 2025).
     cur = start
     while cur < end:
-        nxt = min(cur + MAX_SPAN, end)
+        new_year = datetime(cur.year + 1, 1, 1, tzinfo=timezone.utc)
+        nxt = min(cur + MAX_SPAN, end, new_year)
         yield cur, nxt
         cur = nxt
 
