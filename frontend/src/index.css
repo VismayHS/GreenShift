@@ -1,0 +1,75 @@
+@import "tailwindcss";
+@import "@fontsource-variable/atkinson-hyperlegible-next";
+
+/* Synoptic chart world: chart paper, isobar ink, H in brick, L in deep green.
+   Light only, by scene: a projected viva room and a laptop in daylight. */
+@theme {
+  --font-sans: "Atkinson Hyperlegible Next Variable", ui-sans-serif, system-ui, sans-serif;
+  --color-paper: #f1f3ee;
+  --color-paper-2: #e3e8e0;
+  --color-paper-3: #d4dbd1;
+  --color-ink: #13243a;
+  --color-ink-2: #3a4a5c;
+  --color-low: #1f6b4a;
+  --color-low-2: #2f8a62;
+  --color-high: #a63d2a;
+  --color-front: #2a5d9f;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+:root {
+  color-scheme: light;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: 18px;
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  scrollbar-color: var(--color-ink-2) var(--color-paper-2);
+}
+
+::selection {
+  background: var(--color-low);
+  color: var(--color-paper);
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-front);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+a {
+  text-underline-offset: 0.22em;
+  text-decoration-thickness: 0.08em;
+}
+
+h1, h2, h3 {
+  text-wrap: balance;
+  letter-spacing: -0.025em;
+  line-height: 1;
+}
+
+p { text-wrap: pretty; }
+
+/* Entrance helper: visible by default, so content never depends on script. */
+.rise {
+  transition: opacity 700ms var(--ease-out-expo), transform 700ms var(--ease-out-expo);
+}
+.rise[data-pending="true"] {
+  opacity: 0;
+  transform: translateY(24px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rise, .rise[data-pending="true"] {
+    transition: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Grid items may shrink below their content, so measured charts fit the column. */
+.grid > * { min-width: 0; }

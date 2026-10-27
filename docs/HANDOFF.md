@@ -63,7 +63,7 @@ This file holds everything researched, decided, built and measured so far, plus 
 | 7 | Job catalogue + measurement campaign | ⏳ `configs/jobs.json` drafted (proposed jobs, window 22:00-07:00) |
 | 8 | Scheduler policies + backtest simulator | ⏳ |
 | 9 | Online scheduler + Airflow DAG | ⏳ |
-| 10 | Savings report | ⏳ Site in progress: `frontend/` (story + Tonight view) |
+| 10 | Savings report | ⏳ Site built: `frontend/` (story + Tonight view, React 19 + Vite 8 + Tailwind 4; data from `scripts/export_site_data.py`). Savings section pending the backtest. Tonight's planner (P0 + greedy P2, TS) mirrors §8; the Python scheduler stays the reference |
 | 11 | Tests | ⏳ |
 
 ### Linux machine (set up 2026-10-27)

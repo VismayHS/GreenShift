@@ -1,0 +1,11 @@
+{
+  "status": "proposed (HANDOFF §8 step 7); finalise after SF5 timings",
+  "window": {"release_local": "22:00", "deadline_local": "07:00", "tz": "Europe/London", "decided": "2026-10-27"},
+  "jobs": [
+    {"name": "daily_sales_report", "queries": [3, 7, 19, 42, 52, 55], "character": "light BI dashboards", "interruptible": false},
+    {"name": "customer_analytics", "queries": [4, 11, 74], "character": "heavy multi-year customer aggregation", "interruptible": false},
+    {"name": "inventory_supply_chain", "queries": [21, 22, 37, 39, 72, 82], "character": "inventory joins", "interruptible": false},
+    {"name": "cross_channel_promo", "queries": [14, 23, 33, 56, 60, 77, 80], "character": "union of three sales channels, very heavy", "interruptible": true},
+    {"name": "returns_audit", "queries": [16, 50, 62, 94, 95, 99], "character": "returns and shipping lag", "interruptible": false}
+  ]
+}
