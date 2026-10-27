@@ -1,0 +1,14 @@
+.venv/
+.tools/
+__pycache__/
+*.pyc
+# Data: regenerable. GB API CSVs (CC BY 4.0, ~4 MB each) are committed for convenience.
+data/raw/*
+!data/raw/carbon/
+data/raw/carbon/neso_historic_generation_mix.csv
+data/processed/
+data/tpcds/
+spark-warehouse/
+metastore_db/
+derby.log
+.ipynb_checkpoints/

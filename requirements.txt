@@ -1,0 +1,9 @@
+pyspark==4.2.0
+duckdb==2.0.0
+pandas<3
+pyarrow
+numpy
+requests
+matplotlib
+psutil
+pywin32; sys_platform == "win32"
