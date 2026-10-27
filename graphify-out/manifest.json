@@ -1,0 +1,176 @@
+{
+  "scripts/eda_carbon.py": {
+    "mtime": 1793081255.2443752,
+    "seen": 1793081706.342334,
+    "ast_hash": "c5d07b6791c058c4cd4c8a08ecd3bea4",
+    "semantic_hash": ""
+  },
+  "scripts/fetch_carbon_data.py": {
+    "mtime": 1793079206.0746396,
+    "seen": 1793081706.3423388,
+    "ast_hash": "d2a843d76b88dba63504b53b2cbd7b7f",
+    "semantic_hash": ""
+  },
+  "scripts/generate_tpcds.py": {
+    "mtime": 1793079206.074786,
+    "seen": 1793081706.3423412,
+    "ast_hash": "db91f839de8e4d329e8532103b7376c4",
+    "semantic_hash": ""
+  },
+  "src/carbonsched/__init__.py": {
+    "mtime": 1793079206.074889,
+    "seen": 1793081706.3423424,
+    "ast_hash": "257dd03c0e4e3a3aefb7eecd20d36319",
+    "semantic_hash": ""
+  },
+  "src/carbonsched/carbon/__init__.py": {
+    "mtime": 1793079206.0749562,
+    "seen": 1793081706.3423433,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": ""
+  },
+  "src/carbonsched/carbon/clean.py": {
+    "mtime": 1793081167.0017092,
+    "seen": 1793081706.3423443,
+    "ast_hash": "b46aaae7fba7e606e9e90bb762eb4f01",
+    "semantic_hash": ""
+  },
+  "src/carbonsched/carbon/uk_api.py": {
+    "mtime": 1793081081.9199114,
+    "seen": 1793081706.342345,
+    "ast_hash": "c7169f7142d752a527fc4bf5db6fadeb",
+    "semantic_hash": ""
+  },
+  "src/carbonsched/energy/__init__.py": {
+    "mtime": 1793079206.0749931,
+    "seen": 1793081706.3423457,
+    "ast_hash": "d1e1f689350452ba8fba5f2847ff11f3",
+    "semantic_hash": ""
+  },
+  "src/carbonsched/energy/meter.py": {
+    "mtime": 1793079206.0751295,
+    "seen": 1793081706.3423464,
+    "ast_hash": "dcd256e68944afc23b9efe558cfc49c5",
+    "semantic_hash": ""
+  },
+  "src/carbonsched/energy/model.py": {
+    "mtime": 1793079206.0751295,
+    "seen": 1793081706.3423471,
+    "ast_hash": "6bc432dfa777a1eccd69215354431bea",
+    "semantic_hash": ""
+  },
+  "src/carbonsched/energy/sensors.py": {
+    "mtime": 1793079206.0751295,
+    "seen": 1793081706.342348,
+    "ast_hash": "45a266eb76822ae1a12edf1a8a782c2e",
+    "semantic_hash": ""
+  },
+  "src/carbonsched/env.py": {
+    "mtime": 1793080409.9245498,
+    "seen": 1793081706.3423488,
+    "ast_hash": "534588d9a0d63f33bfb1cf990d83cbc4",
+    "semantic_hash": ""
+  },
+  "src/carbonsched/workloads/__init__.py": {
+    "mtime": 1793079206.0751295,
+    "seen": 1793081706.3423498,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": ""
+  },
+  "src/carbonsched/workloads/spark_jobs.py": {
+    "mtime": 1793080681.8375988,
+    "seen": 1793081706.3423505,
+    "ast_hash": "af37df87d6a8f846f8d60ac6338383c9",
+    "semantic_hash": ""
+  },
+  "CLAUDE.md": {
+    "mtime": 1793081669.027096,
+    "seen": 1793081706.3423517,
+    "ast_hash": "fd47b1fa604eed11cab5e484a946a0fc",
+    "semantic_hash": ""
+  },
+  "README.md": {
+    "mtime": 1793079205.8987825,
+    "seen": 1793081706.3423526,
+    "ast_hash": "ed2d962c44bbdde8e1d183ceba519e3c",
+    "semantic_hash": ""
+  },
+  "datacards/electricity_maps.md": {
+    "mtime": 1793079206.0719817,
+    "seen": 1793081706.3423533,
+    "ast_hash": "cfdea0d439e03176eb66eef5e270560c",
+    "semantic_hash": ""
+  },
+  "datacards/neso_historic_generation_mix.md": {
+    "mtime": 1793079206.0733836,
+    "seen": 1793081706.342354,
+    "ast_hash": "87b4920810974fdaa04aa730bc330d63",
+    "semantic_hash": ""
+  },
+  "datacards/tpcds.md": {
+    "mtime": 1793079206.0733836,
+    "seen": 1793081706.342355,
+    "ast_hash": "280c6473fffcd6e7b4ab89f395a5818e",
+    "semantic_hash": ""
+  },
+  "datacards/uk_carbon_intensity_api.md": {
+    "mtime": 1793079206.0733836,
+    "seen": 1793081706.3423557,
+    "ast_hash": "96af839682f1bca39b98b655fcde8019",
+    "semantic_hash": ""
+  },
+  "docs/HANDOFF.md": {
+    "mtime": 1793080979.7942605,
+    "seen": 1793081706.3423564,
+    "ast_hash": "fe146f5885a0e6d46df39acd6ac9ce03",
+    "semantic_hash": ""
+  },
+  "notes/00_CONTEXT.md": {
+    "mtime": 1793079206.0733836,
+    "seen": 1793081706.3423574,
+    "ast_hash": "61f1e983516ea6c1f4193441dd1d0eca",
+    "semantic_hash": ""
+  },
+  "notes/01_carbon_data_sources.md": {
+    "mtime": 1793079206.0741305,
+    "seen": 1793081706.3423586,
+    "ast_hash": "01ebe6610839af98f0e46d4a61792547",
+    "semantic_hash": ""
+  },
+  "notes/02_energy_measurement.md": {
+    "mtime": 1793079206.0743163,
+    "seen": 1793081706.3423593,
+    "ast_hash": "64af8554dbf4e3cf2f4ac3b304e39acc",
+    "semantic_hash": ""
+  },
+  "notes/04_workloads_tpcds.md": {
+    "mtime": 1793079206.0745027,
+    "seen": 1793081706.34236,
+    "ast_hash": "0dcd2806420266ffa8a5ef1a97a144da",
+    "semantic_hash": ""
+  },
+  "notes/05_syllabus_mapping.md": {
+    "mtime": 1793079206.074565,
+    "seen": 1793081706.3423607,
+    "ast_hash": "786568fff639be94675e9555e771ffb0",
+    "semantic_hash": ""
+  },
+  "notes/06_project_plan.md": {
+    "mtime": 1793079206.0746396,
+    "seen": 1793081706.3423617,
+    "ast_hash": "6333ad6f543541359edbebb5dcbf56ca",
+    "semantic_hash": ""
+  },
+  "requirements.txt": {
+    "mtime": 1793079206.0746396,
+    "seen": 1793081706.3423626,
+    "ast_hash": "81631642a05419ba10e6fe2c5f0e3d64",
+    "semantic_hash": ""
+  },
+  "notes/03_scheduling_literature.md": {
+    "mtime": 1793079206.07443,
+    "seen": 1793081706.3423634,
+    "ast_hash": "a2c976592b793725b528d237554c1ea3",
+    "semantic_hash": ""
+  }
+}
