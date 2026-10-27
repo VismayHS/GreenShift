@@ -56,7 +56,7 @@ This file holds everything researched, decided, built and measured so far, plus 
 |---|---|---|
 | 1 | Research (data sources, energy measurement, literature, TPC-DS, Spark compat) | ✅ |
 | 2 | Environment (Spark 4.2 + JDK 21 + venv) | ✅ Windows. Redo on the new system (§7) |
-| 3 | Carbon-data fetcher (GB API + NESO) | ✅ code. Download: national + regions 1-4 done, 5-14 + NESO in progress/resumable |
+| 3 | Carbon-data fetcher (GB API + NESO) | ✅ National + regions 1-7 committed (2024-25). Regions 8-14 and the NESO CSV skipped as optional; fetch later with `--regions 13 14 --skip-neso` if needed |
 | 4 | Energy meter (RAPL / battery / model + Spark metrics) | ✅ tested on Windows. Linux RAPL reader written, **untested** |
 | 5 | TPC-DS data generation + Spark compatibility | ✅ SF1; **99/99 queries run** |
 | 6 | Carbon data cleaning + EDA | ⏳ next |
