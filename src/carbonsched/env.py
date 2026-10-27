@@ -1,8 +1,10 @@
-"""Runtime environment for local Spark on Windows.
+"""Runtime environment for local Spark (Windows and Linux).
 
-Spark 4.2 supports Java 17/21/25 only, so we point JAVA_HOME at the portable
-JDK 21 in .tools/ instead of the system Java 26. SPARK_HOME is set explicitly
-because pyspark's find-spark-home.cmd breaks on paths containing spaces.
+Spark 4.2 supports Java 17/21/25 only, so we point JAVA_HOME at a JDK 21:
+the portable one in .tools/ on Windows (system Java there is 26), or the apt
+package under /usr/lib/jvm on Linux (system default there is 11, kept for
+Hadoop 3.3). SPARK_HOME is set explicitly because pyspark's
+find-spark-home.cmd breaks on paths containing spaces.
 """
 
 from __future__ import annotations
@@ -15,11 +17,11 @@ from . import PROJECT_ROOT
 
 
 def _find_jdk() -> Path | None:
-    tools = PROJECT_ROOT / ".tools"
-    if tools.is_dir():
-        for d in sorted(tools.glob("jdk-21*"), reverse=True):
-            if (d / "bin" / "java.exe").exists() or (d / "bin" / "java").exists():
-                return d
+    candidates = sorted((PROJECT_ROOT / ".tools").glob("jdk-21*"), reverse=True)
+    candidates += sorted(Path("/usr/lib/jvm").glob("java-21-openjdk*"), reverse=True)
+    for d in candidates:
+        if (d / "bin" / "java.exe").exists() or (d / "bin" / "java").exists():
+            return d
     return None
 
 

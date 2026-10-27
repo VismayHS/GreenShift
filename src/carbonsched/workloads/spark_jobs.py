@@ -35,9 +35,12 @@ def register_tpcds(spark, sf: str = "sf1", root: str | None = None) -> None:
     """Expose the TPC-DS parquet files as temp views.
 
     root defaults to data/tpcds locally; set CARBONSCHED_TPCDS_ROOT (or pass
-    root) to e.g. hdfs:///tpcds on a Hadoop cluster.
+    root) to e.g. hdfs:///tpcds on a Hadoop cluster. The local default carries
+    an explicit file:// scheme, otherwise a HADOOP_CONF_DIR with
+    fs.defaultFS=hdfs://... makes Spark look for it on HDFS.
     """
-    root = root or os.environ.get("CARBONSCHED_TPCDS_ROOT") or (DATA_DIR / "tpcds").as_posix()
+    local = "file:///" + (DATA_DIR / "tpcds").as_posix().lstrip("/")
+    root = root or os.environ.get("CARBONSCHED_TPCDS_ROOT") or local
     for t in TPCDS_TABLES:
         spark.read.parquet(f"{root.rstrip('/')}/{sf}/{t}.parquet").createOrReplaceTempView(t)
 
