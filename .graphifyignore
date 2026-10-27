@@ -1,0 +1,8 @@
+# Map GreenShift itself, not tooling or data.
+.claude/
+.venv/
+.tools/
+data/
+graphify-out/
+frontend/node_modules/
+frontend/dist/

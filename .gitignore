@@ -12,3 +12,8 @@ spark-warehouse/
 metastore_db/
 derby.log
 .ipynb_checkpoints/
+# Tool caches and working files
+graphify-out/cache/
+.taste-skill/
+.impeccable/config.local.json
+.claude/settings.local.json
