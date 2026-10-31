@@ -35,6 +35,15 @@ def load_sizes(catalogue: Path, measurements: Path, config: dict) -> tuple[list[
     counts = frame.groupby("job").size()
     if any(j["name"] not in summary.index or counts.get(j["name"], 0) < 5 for j in jobs):
         raise ValueError("at least five measurements are required for every catalogue job")
+    cv = frame.groupby("job")[["duration_s", "attributable_kwh"]].std() / summary
+    if (cv >= 0.1).any().any():
+        raise ValueError("measurement CV must be below 10% for duration and attributable energy")
+    for job in jobs:
+        if "repeats" in frame and not (frame.loc[frame.job == job["name"], "repeats"] == job.get("repeats", 1)).all():
+            raise ValueError("catalogue repetitions differ from measured workload")
+    metadata = measurements.with_name("measurements_meta.json")
+    if metadata.exists() and json.loads(metadata.read_text())["status"] != "complete":
+        raise ValueError("measurement session is not complete; refusing provisional results")
     scale = config.get("scale")
     if scale is None:
         scale = config["target_heaviest_s"] / max(summary.loc[j["name"], "duration_s"] for j in jobs)

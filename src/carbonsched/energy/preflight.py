@@ -6,6 +6,7 @@ import json
 import platform
 import shutil
 import subprocess
+from importlib.metadata import version
 from datetime import datetime, timezone
 
 import psutil
@@ -52,6 +53,12 @@ def machine_info(room_conditions: str = "unknown; not supplied") -> dict:
     else:
         info["power_scheme"] = "unknown; record manually"
     info["java"] = shutil.which("java")
+    from carbonsched.env import _find_jdk
+    jdk = _find_jdk()
+    if jdk:
+        info["spark_jdk"] = str(jdk)
+    info["versions"] = {package: version(package) for package in
+                        ("pyspark", "duckdb", "pandas", "numpy", "psutil", "pyarrow")}
     sensor = try_rapl()
     info["sensor"] = type(sensor).__name__ if sensor else None
     if sensor:

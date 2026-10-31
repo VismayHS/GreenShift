@@ -57,6 +57,8 @@ def spark_session(app_name: str, cores: int | str = "*", driver_memory: str = "6
         .config("spark.sql.shuffle.partitions", shuffle_partitions)
         .config("spark.sql.adaptive.enabled", "true")
         .config("spark.ui.showConsoleProgress", "false")
+        .config("spark.ui.retainedStages", "100000")
+        .config("spark.ui.retainedJobs", "10000")
         .config("spark.sql.session.timeZone", "UTC")
         .getOrCreate()
     )

@@ -45,3 +45,27 @@ def test_overfull_workload_fails_explicitly():
     r,jobs=jobs_for(3)
     with pytest.raises(InfeasibleSchedule):
         schedule("P4",jobs+[Job("c",1,1,False,r,r+3*SLOT)],[10]*3,r)
+
+
+def test_edf_preserves_urgent_job_when_large_job_prefers_its_slot():
+    r,_=jobs_for()
+    jobs=[Job("urgent",1,1,False,r,r+SLOT),Job("large",2,10,False,r,r+6*SLOT)]
+    plans=schedule("P4",jobs,[1,2,3,4,5,6],r)
+    assert plans[0].slots==(0,)
+    assert plans[1].slots==(1,2)
+
+
+def test_capacity_two_allows_parallel_baseline():
+    r,jobs=jobs_for()
+    plans=schedule("P0",jobs,[100]*6,r,2)
+    assert plans[0].start==plans[1].start==r
+
+
+@pytest.mark.parametrize("policy",["P2","P4"])
+def test_single_job_best_window_matches_brute_force(policy):
+    r,jobs=jobs_for()
+    rng=np.random.default_rng(8)
+    for _ in range(30):
+        ci=rng.uniform(0,500,6)
+        plan=schedule(policy,jobs[:1],ci,r)[0]
+        assert plan.emissions(ci)==pytest.approx(min(ci[i:i+2].mean()*2 for i in range(5)))

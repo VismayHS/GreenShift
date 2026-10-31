@@ -1,5 +1,5 @@
 """Wiesner Scenario I on 2024-25 GB data, with explicit start-window semantics."""
-from datetime import datetime, time, timedelta
+from datetime import datetime, time, timedelta, timezone
 from .models import Job, SLOT, UK
 from .simulator import scenarios
 
@@ -8,7 +8,7 @@ def all_scenarios(night, sizes, config):
     yield from scenarios(night,sizes,config)
     # fold=0 picks the first 01:00 on the autumn clock change. On the spring
     # change 01:00 does not exist: round-trip normalizes it to 02:00 BST.
-    anchor=datetime.combine(night,time(1),UK).astimezone(__import__("datetime").timezone.utc)
+    anchor=datetime.combine(night,time(1),UK).astimezone(timezone.utc)
     for hours in config["replication_windows_h"]:
         release=anchor-timedelta(hours=hours)
         deadline=anchor+timedelta(hours=hours)+SLOT

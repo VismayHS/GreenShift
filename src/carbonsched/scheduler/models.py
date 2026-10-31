@@ -95,6 +95,8 @@ def validate(plans: list[Plan], jobs: list[Job], n_slots: int, capacity_k: int) 
     if len(plans) != len(jobs) or {p.job for p in plans} != set(jobs):
         raise ValueError("plan must contain each input job exactly once")
     used = np.zeros(n_slots, dtype=int)
+    if len({p.grid_start for p in plans}) > 1:
+        raise ValueError("plans must share a UTC grid origin")
     for plan in plans:
         if plan.slots[-1] >= n_slots:
             raise ValueError("placement outside grid")

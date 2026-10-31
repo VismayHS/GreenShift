@@ -26,14 +26,14 @@ def build_signal(data: pd.DataFrame, slots: pd.DatetimeIndex, mode: str,
     if mode == "api":
         values = data["forecast"].reindex(slots).to_numpy(dtype=float, copy=True)
         if "forecast_interp" in data:
-            interpolated = data["forecast_interp"].reindex(slots).fillna(False).to_numpy(dtype=bool)
+            interpolated = data["forecast_interp"].reindex(slots, fill_value=False).to_numpy(dtype=bool)
             values[interpolated] = np.nan
         missing = ~np.isfinite(values)
         lag = slots - pd.Timedelta(hours=24)
         previous = data["actual"].reindex(lag).to_numpy(dtype=float, copy=True)
         available = lag + pd.Timedelta(minutes=30) <= pd.Timestamp(decision_time)
         if "actual_interp" in data:
-            available &= ~data["actual_interp"].reindex(lag).fillna(False).to_numpy(dtype=bool)
+            available &= ~data["actual_interp"].reindex(lag, fill_value=False).to_numpy(dtype=bool)
         fill = missing & available & np.isfinite(previous)
         values[fill] = previous[fill]
         return Signal(values, int(missing.sum()), int(fill.sum()), int((~np.isfinite(values)).sum()))

@@ -56,7 +56,7 @@ def _stage_metrics(spark) -> dict:
     """Sum stage metrics for every stage seen so far in this application."""
     ui = spark.sparkContext.uiWebUrl
     app = spark.sparkContext.applicationId
-    with urllib.request.urlopen(f"{ui}/api/v1/applications/{app}/stages?status=complete") as r:
+    with urllib.request.urlopen(f"{ui}/api/v1/applications/{app}/stages?status=complete", timeout=30) as r:
         stages = json.load(r)
     keys = ("executorRunTime", "executorCpuTime", "inputBytes", "shuffleReadBytes",
             "shuffleWriteBytes", "numCompleteTasks", "memoryBytesSpilled", "diskBytesSpilled")

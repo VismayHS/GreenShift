@@ -13,6 +13,11 @@ def test_api_has_no_actual_lookahead():
     np.testing.assert_array_equal(original.values,changed.values)
     assert original.substitutions==2 and original.missing_slots==2
     assert original.values[0]==90
+    from carbonsched.scheduler.models import Job
+    from carbonsched.scheduler.policies import schedule
+    job=Job("causal",2,1,False,slots[0].to_pydatetime(),(slots[-1]+pd.Timedelta(minutes=30)).to_pydatetime())
+    for policy in ["P0","P2","P3","P4"]:
+        assert schedule(policy,[job],original.values,job.release)==schedule(policy,[job],changed.values,job.release)
 
 def test_cannot_use_unavailable_lag_or_interpolated_forecast():
     idx=pd.date_range("2024-01-01",periods=144,freq="30min",tz="UTC")
