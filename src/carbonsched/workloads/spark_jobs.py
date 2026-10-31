@@ -70,13 +70,14 @@ def _delta(after: dict, before: dict) -> dict:
 
 
 def run_job(spark, name: str, queries: list[int], idle_w: float | None = None,
-            interval_s: float = 0.5) -> dict:
+            interval_s: float = 0.5, repeats: int = 1) -> dict:
     """Execute one job (sequence of queries) under an EnergyMeter."""
     spark.sparkContext.setJobGroup(name, f"carbonsched job {name}")
     before = _stage_metrics(spark)
     with EnergyMeter(name, interval_s=interval_s, idle_w=idle_w) as m:
-        for q in queries:
-            spark.sql(load_query(q)).write.format("noop").mode("overwrite").save()
+        for _ in range(repeats):
+            for q in queries:
+                spark.sql(load_query(q)).write.format("noop").mode("overwrite").save()
     spark_m = _delta(_stage_metrics(spark), before)
     rec = m.result.summary()
     rec.update({"job": name, "queries": queries,
