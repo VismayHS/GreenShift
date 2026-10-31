@@ -97,6 +97,14 @@ def main():
             frame.to_csv(raw_path, index=False)
             summary.to_csv(RESULTS_DIR / "measurements_summary.csv", index=False)
             info["calibration"] = fit_model(frame)
+            calibration = info["calibration"]
+            frame["calibrated_model_j"] = (calibration["p_idle_w"] +
+                (calibration["p_max_w"] - calibration["p_idle_w"]) * frame.mean_cpu_util) * frame.duration_s
+            frame.to_csv(raw_path, index=False)
+            (RESULTS_DIR / "power_model.json").write_text(json.dumps(
+                {**calibration, "memory_gb": 0, "pue": 1,
+                 "note": "Fitted on this campaign; in-sample R2, not held-out validation."},
+                indent=2), encoding="utf-8")
             info["idle_used_w"] = avg_idle
             failing = summary.loc[~summary.quality_pass]
             queue = [j for j in jobs if j["name"] in set(failing.loc[failing.n < args.max_runs, "job"])]
