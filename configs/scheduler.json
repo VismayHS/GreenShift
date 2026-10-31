@@ -1,0 +1,51 @@
+{
+  "start": "2024-01-01",
+  "end": "2026-01-01",
+  "capacity_k": [
+    1,
+    2
+  ],
+  "policies": [
+    "P0",
+    "P2",
+    "P3",
+    "P4"
+  ],
+  "forecast_modes": [
+    "api",
+    "oracle",
+    "noisy"
+  ],
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "scale": null,
+  "target_heaviest_s": 7200,
+  "pue": 1,
+  "energy_basis": "attributable",
+  "placeholder_slots": [
+    1,
+    2,
+    2,
+    4,
+    2
+  ],
+  "placeholder_energy_kwh": 0.001,
+  "replication_windows_h": [
+    0.5,
+    1,
+    2,
+    4,
+    8
+  ],
+  "note": "Null scale is resolved from measured mean durations; placeholder energy is synthetic, never a measurement. PUE 1.0 avoids an unverified data-centre assumption."
+}
