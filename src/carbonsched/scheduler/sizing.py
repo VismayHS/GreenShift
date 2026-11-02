@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from .models import Job
+from .models import Job, SLOT, night_window
 
 
 def load_sizes(catalogue: Path, measurements: Path, config: dict) -> tuple[list[dict], dict]:
@@ -45,8 +45,27 @@ def load_sizes(catalogue: Path, measurements: Path, config: dict) -> tuple[list[
     if metadata.exists() and json.loads(metadata.read_text())["status"] != "complete":
         raise ValueError("measurement session is not complete; refusing provisional results")
     scale = config.get("scale")
+    target_scale = config["target_heaviest_s"] / max(summary.loc[j["name"], "duration_s"] for j in jobs)
     if scale is None:
-        scale = config["target_heaviest_s"] / max(summary.loc[j["name"], "duration_s"] for j in jobs)
+        scale = target_scale
+        if "start" in config and "end" in config:
+            windows = [night_window(t.date()) for t in pd.date_range(config["start"],config["end"],inclusive="left")]
+            if not windows:
+                raise ValueError("simulation date range is empty")
+            # Choose the largest scale up to the two-hour target that can fit
+            # even the shortest DST night at the smallest tested capacity.
+            available = min(int((d-r)/SLOT) for r,d in windows) * min(config["capacity_k"])
+            def demand(value):
+                return sum(max(1,math.ceil(summary.loc[j["name"],"duration_s"]*value/1800-1e-12)) for j in jobs)
+            if len(jobs)>available:
+                raise ValueError("even one slot per job exceeds nightly capacity")
+            if demand(scale)>available:
+                lo,hi=0.0,scale
+                for _ in range(60):
+                    mid=(lo+hi)/2
+                    if demand(mid)<=available: lo=mid
+                    else: hi=mid
+                scale=lo
     pue = float(config["pue"])
     if not math.isfinite(scale) or scale <= 0 or not math.isfinite(pue) or pue < 1:
         raise ValueError("SCALE must be positive and PUE must be >=1")
@@ -56,6 +75,7 @@ def load_sizes(catalogue: Path, measurements: Path, config: dict) -> tuple[list[
         sizes.append({**job, "duration_slots": max(1, math.ceil(stats.duration_s * scale / 1800 - 1e-12)),
                       "energy_kwh": stats.attributable_kwh * scale * pue})
     return sizes, {"source": "measurements", "scale": scale, "pue": pue,
+                   "target_scale": target_scale, "capacity_adjusted": scale < target_scale - 1e-9,
                    "energy_basis": "attributable CPU-package kWh",
                    "measurements": str(measurements), "rounding": "ceil duration to 30 min; energy conserved"}
 
