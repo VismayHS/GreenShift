@@ -23,7 +23,7 @@ from carbonsched.workloads.spark_jobs import register_tpcds, run_job
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--sf", type=int, default=5)
+    parser.add_argument("--sf", type=int, help="defaults to the calibrated catalogue scale factor")
     parser.add_argument("--cores", default="4")
     parser.add_argument("--driver-memory", default="8g")
     parser.add_argument("--seed", type=int, default=20261031)
@@ -36,6 +36,10 @@ def main():
         parser.error("Confirm physical measurement conditions with --conditions-confirmed")
     if args.max_runs < 5:
         parser.error("--max-runs must be at least 5")
+    config = json.loads((PROJECT_ROOT / "configs/jobs.json").read_text())
+    args.sf = args.sf if args.sf is not None else config.get("scale_factor", 5)
+    if args.sf != config.get("scale_factor", args.sf):
+        parser.error("--sf differs from the catalogue; prepare the campaign at this scale first")
     info = machine_info(args.room_conditions)
     require_rapl(info)
     info.update(scale_factor=args.sf, seed=args.seed, cores=args.cores,
@@ -47,7 +51,6 @@ def main():
     raw_path = RESULTS_DIR / "measurements.csv"
     if raw_path.exists():
         parser.error("measurements.csv already exists; archive it before a new session")
-    config = json.loads((PROJECT_ROOT / "configs/jobs.json").read_text())
     jobs = config["jobs"]
     records = []
     rng = random.Random(args.seed)

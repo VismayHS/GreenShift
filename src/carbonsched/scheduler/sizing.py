@@ -11,7 +11,8 @@ from .models import Job, SLOT, night_window
 
 
 def load_sizes(catalogue: Path, measurements: Path, config: dict) -> tuple[list[dict], dict]:
-    jobs = json.loads(catalogue.read_text(encoding="utf-8"))["jobs"]
+    catalogue_data = json.loads(catalogue.read_text(encoding="utf-8"))
+    jobs = catalogue_data["jobs"]
     if not measurements.exists():
         slots = config["placeholder_slots"]
         if len(slots) != len(jobs):
@@ -26,6 +27,9 @@ def load_sizes(catalogue: Path, measurements: Path, config: dict) -> tuple[list[
         raise ValueError(f"measurements missing columns: {required - set(frame.columns)}")
     if set(frame.energy_source) != {"rapl"}:
         raise ValueError("final scheduler sizes require labelled RAPL measurements")
+    if "scale_factor" in frame and "scale_factor" in catalogue_data:
+        if not (frame.scale_factor == catalogue_data["scale_factor"]).all():
+            raise ValueError("catalogue scale factor differs from measurements")
     if (frame.duration_s < 30).any() or (frame.attributable_kwh <= 0).any():
         raise ValueError("measurement duration/attributable energy invalid")
     for col in ("duration_s", "attributable_kwh"):

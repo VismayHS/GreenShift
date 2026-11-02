@@ -15,3 +15,16 @@ def test_scaling_preserves_energy_and_marks_placeholders(tmp_path):
     assert meta["scale"]==120
     assert sizes[0]["duration_slots"]==4
     assert sizes[0]["energy_kwh"]==pytest.approx(0.18)
+
+
+def test_automatic_scale_fits_spring_dst_night(tmp_path):
+    cat=tmp_path/"jobs.json"
+    jobs=[{"name":f"j{i}","interruptible":False} for i in range(5)]
+    cat.write_text(json.dumps({"jobs":jobs}))
+    csv=tmp_path/"measurements.csv"
+    pd.DataFrame([{"job":j["name"],"duration_s":60,"attributable_kwh":0.001,"energy_source":"rapl"}
+                  for j in jobs for _ in range(5)]).to_csv(csv,index=False)
+    cfg={"scale":None,"target_heaviest_s":7200,"pue":1,"start":"2024-03-30","end":"2024-04-01","capacity_k":[1,2]}
+    sizes,meta=load_sizes(cat,csv,cfg)
+    assert sum(j["duration_slots"] for j in sizes)<=16
+    assert meta["capacity_adjusted"]
