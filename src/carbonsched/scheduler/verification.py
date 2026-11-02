@@ -31,6 +31,8 @@ def verify_outputs(output: Path, carbon: pd.DataFrame) -> dict:
     step_ns=30*60*10**9
     usage={}
     base_energy={}
+    expected_jobs={j["name"]:j for j in meta["resolved_jobs"]}
+    seen_jobs={}
     for row,a in zip(frame.itertuples(index=False),audit.itertuples(index=False)):
         slots=np.asarray(a.slots,dtype=int)
         baseline=np.asarray(a.baseline_slots,dtype=int)
@@ -48,6 +50,15 @@ def verify_outputs(output: Path, carbon: pd.DataFrame) -> dict:
         assert row.delay_min==(row.end_utc-row.baseline_end_utc).total_seconds()/60
         window=None if pd.isna(row.window_h) else row.window_h
         key=(row.night,row.scenario,row.region,row.policy,row.forecast_mode,row.seed,window,row.capacity_k)
+        seen_jobs.setdefault(key,set()).add(row.job)
+        if row.scenario=="nightly":
+            expected=expected_jobs[row.job]
+            assert row.n_slots==expected["duration_slots"]
+            assert row.energy_kwh==expected["energy_kwh"]
+            assert not row.interrupted or (row.policy=="P3" and expected["interruptible"])
+        else:
+            assert row.scenario=="wiesner_s1" and row.job=="wiesner_s1"
+            assert row.n_slots==1 and row.energy_kwh==1
         counts=usage.setdefault(key,{})
         for s in slots:
             counts[int(s)]=counts.get(int(s),0)+1
@@ -55,6 +66,12 @@ def verify_outputs(output: Path, carbon: pd.DataFrame) -> dict:
         energy_key=(row.night,row.scenario,window,row.capacity_k,row.job)
         previous=base_energy.setdefault(energy_key,row.energy_kwh)
         assert row.energy_kwh==previous
+        if row.policy=="P0":
+            assert np.array_equal(slots,baseline)
+            assert row.emissions_g==row.baseline_emissions_g
+            assert row.delay_min==0
+    for key,names in seen_jobs.items():
+        assert names==(set(expected_jobs) if key[1]=="nightly" else {"wiesner_s1"}), "incomplete run"
     totals=frame.groupby(["scenario","policy","forecast_mode"])[["emissions_g","baseline_emissions_g"]].sum()
     comparisons=[]
     for (scenario,policy), group in totals.groupby(level=[0,1]):

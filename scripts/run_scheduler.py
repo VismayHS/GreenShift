@@ -24,7 +24,7 @@ def main():
     parser.add_argument("--offline",action="store_true")
     parser.add_argument("--at",help="ISO date for a labelled historical dry-run replay")
     parser.add_argument("--capacity",type=int,default=1)
-    parser.add_argument("--cores",default="8")
+    parser.add_argument("--cores",default="4")
     parser.add_argument("--driver-memory",default="8g")
     parser.add_argument("--output",type=Path,default=RESULTS_DIR/"plans")
     args=parser.parse_args()
@@ -32,7 +32,7 @@ def main():
         parser.error("--now cannot be combined with historical replay")
     config=json.loads((PROJECT_ROOT/"configs/scheduler.json").read_text())
     sizes,sizing=load_sizes(PROJECT_ROOT/"configs/jobs.json",RESULTS_DIR/"measurements.csv",config)
-    frame,provenance=fetch_forecast(PROJECT_ROOT/"frontend/public/data/forecast_fallback.json",args.offline)
+    frame,provenance=fetch_forecast(PROJECT_ROOT/"frontend/public/data/forecast_fallback.json",args.offline or args.at is not None)
     now=pd.Timestamp(args.at).to_pydatetime() if args.at else datetime.now(timezone.utc)
     if now.tzinfo is None:
         parser.error("--at must include a timezone")
@@ -67,7 +67,9 @@ def main():
         if job is None:
             parser.error(f"unknown job {args.job}")
         metadata=RESULTS_DIR/"measurements_meta.json"
-        idle=json.loads(metadata.read_text()).get("idle_used_w") if metadata.exists() else None
+        campaign=json.loads(metadata.read_text()) if metadata.exists() else {}
+        idle=(campaign.get("idle_used_w") if campaign.get("status")=="complete"
+              and campaign.get("cpu")==info["cpu"] else None)
         spark=spark_session("greenshift-live-demo",cores=args.cores,driver_memory=args.driver_memory)
         try:
             register_tpcds(spark,f"sf{catalogue.get('scale_factor',5)}")

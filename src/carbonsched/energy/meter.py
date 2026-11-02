@@ -48,9 +48,9 @@ class MeterResult:
         return self.rapl_pkg_j if self.rapl_pkg_j is not None else self.model_j
 
     @property
-    def attributable_j(self) -> float:
+    def attributable_j(self) -> float | None:
         if self.idle_w is None:
-            return self.best_j
+            return None
         return max(self.best_j - self.idle_w * self.duration_s, 0.0)
 
     @property
@@ -59,9 +59,10 @@ class MeterResult:
         return self.best_j / 3.6e6
 
     @property
-    def attributable_kwh(self) -> float:
+    def attributable_kwh(self) -> float | None:
         """Idle-subtracted energy used by the scheduler; PUE is applied later."""
-        return self.attributable_j / 3.6e6
+        value = self.attributable_j
+        return value / 3.6e6 if value is not None else None
 
     def summary(self) -> dict:
         d = asdict(self)

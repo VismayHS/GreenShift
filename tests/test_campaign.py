@@ -13,4 +13,6 @@ def test_summary_and_idle_have_known_units():
     assert summary.quality_pass
     assert summary.attributable_j_mean == 322
     assert summary.attributable_j_ci95_low < 322 < summary.attributable_j_ci95_high
+    assert summary.attributable_j_ci95_low == pytest.approx(320.0368, abs=0.0001)
+    assert summary.attributable_j_ci95_high == pytest.approx(323.9632, abs=0.0001)
     assert fit_model(records)["r2"] == pytest.approx(1)

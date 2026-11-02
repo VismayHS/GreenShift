@@ -11,6 +11,8 @@ def test_gross_and_attributable_are_explicit():
     assert r.summary()["energy_source"] == "rapl"
     r.idle_w = 20
     assert r.attributable_kwh == 0
+    r.idle_w = None
+    assert r.attributable_j is None and r.attributable_kwh is None
 
 
 @pytest.mark.parametrize("count", [0, 1, 2])

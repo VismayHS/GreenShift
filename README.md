@@ -11,6 +11,22 @@ UE24AM343AB3 Mini-project, Track G (Governance, Compliance and Sustainability).
 
 Start with [docs/HANDOFF.md](docs/HANDOFF.md): full context, research, decisions, status and setup on Linux/Hadoop.
 
+Person 2's implemented measurement, scheduling and verification commands are in
+[docs/PERSON2.md](docs/PERSON2.md). Run the completed campaign data through:
+
+```powershell
+.venv\Scripts\python -m pip install -r requirements-dev.txt
+.venv\Scripts\python -m pytest -q
+.venv\Scripts\python scripts\run_backtest.py
+.venv\Scripts\python scripts\verify_results.py
+.venv\Scripts\python scripts\run_scheduler.py --dry-run
+```
+
+The simulator exports the shared `results/backtest.parquet` contract plus metadata
+and a slot audit trail. It uses attributable RAPL energy when a completed campaign
+is present; otherwise it explicitly labels development placeholders. The existing
+website export still belongs to the separate Person 3 report/site integration.
+
 ## Setup (Windows)
 
 ```powershell

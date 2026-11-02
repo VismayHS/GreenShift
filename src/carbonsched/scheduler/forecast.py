@@ -50,4 +50,4 @@ def build_signal(data: pd.DataFrame, slots: pd.DatetimeIndex, mode: str,
         mean = data.loc[mask, "actual"].mean()
         rng = np.random.default_rng(np.random.SeedSequence([seed, int(year)]))
         noise.loc[mask] = rng.normal(0, 0.05 * mean, int(mask.sum()))
-    return Signal(np.maximum(0, actual + noise.reindex(slots).to_numpy()))
+    return Signal(actual + noise.reindex(slots).to_numpy())

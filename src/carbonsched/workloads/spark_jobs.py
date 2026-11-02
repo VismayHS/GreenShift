@@ -52,16 +52,19 @@ def load_query(nr: int) -> str:
     return sql.strip().rstrip(";")
 
 
-def _stage_metrics(spark) -> dict:
-    """Sum stage metrics for every stage seen so far in this application."""
+def _stage_metrics(spark, after_stage_id: int = -1) -> dict:
+    """Sum completed stages newer than a boundary, independent of UI eviction."""
     ui = spark.sparkContext.uiWebUrl
     app = spark.sparkContext.applicationId
     with urllib.request.urlopen(f"{ui}/api/v1/applications/{app}/stages?status=complete", timeout=30) as r:
         stages = json.load(r)
+    high_water = max((s["stageId"] for s in stages), default=after_stage_id)
+    stages = [s for s in stages if s["stageId"] > after_stage_id]
     keys = ("executorRunTime", "executorCpuTime", "inputBytes", "shuffleReadBytes",
             "shuffleWriteBytes", "numCompleteTasks", "memoryBytesSpilled", "diskBytesSpilled")
     tot = {k: sum(s.get(k, 0) for s in stages) for k in keys}
     tot["numStages"] = len(stages)
+    tot["_max_stage_id"] = high_water
     return tot
 
 
@@ -78,13 +81,13 @@ def run_job(spark, name: str, queries: list[int], idle_w: float | None = None,
         for _ in range(repeats):
             for q in queries:
                 spark.sql(load_query(q)).write.format("noop").mode("overwrite").save()
-    spark_m = _delta(_stage_metrics(spark), before)
+    spark_m = _stage_metrics(spark, after_stage_id=before["_max_stage_id"])
     rec = m.result.summary()
     rec.update({"job": name, "queries": queries,
                 "executor_cpu_s": spark_m["executorCpuTime"] / 1e9,
                 "executor_run_s": spark_m["executorRunTime"] / 1e3,
                 **{f"spark_{k}": v for k, v in spark_m.items()
-                   if k not in ("executorCpuTime", "executorRunTime")}})
+                   if k not in ("executorCpuTime", "executorRunTime", "_max_stage_id")}})
     return rec
 
 

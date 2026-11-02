@@ -69,8 +69,8 @@ def schedule(policy: str, jobs: list[Job], forecast, origin, capacity_k=1) -> li
     if policy not in {"P0","P2","P3","P4"}:
         raise ValueError(f"unknown policy {policy}")
     ci=np.asarray(forecast,dtype=float)
-    if ci.ndim!=1 or (ci[np.isfinite(ci)]<0).any():
-        raise ValueError("forecast must be a nonnegative one-dimensional series")
+    if ci.ndim!=1:
+        raise ValueError("forecast must be a one-dimensional series")
     base=baseline(jobs,ci,origin,capacity_k)
     if policy=="P0" or not np.isfinite(ci).all():
         return base
@@ -105,6 +105,10 @@ def schedule(policy: str, jobs: list[Job], forecast, origin, capacity_k=1) -> li
     chosen=[by_name[j.name] for j in jobs]
     validate(chosen,jobs,len(ci),capacity_k)
     # Same objective and energy weighting for all policies; deterministic ties.
-    if sum(p.emissions(ci) for p in chosen)>sum(p.emissions(ci) for p in base)+1e-12:
+    # Gaussian synthetic forecasts can be negative; actual accounting remains
+    # nonnegative and is checked separately by Plan.emissions().
+    def forecast_cost(plans):
+        return sum(p.job.energy_kwh * float(ci[list(p.slots)].mean()) for p in plans)
+    if forecast_cost(chosen)>forecast_cost(base)+1e-12:
         return base
     return chosen

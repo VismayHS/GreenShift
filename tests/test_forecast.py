@@ -33,3 +33,13 @@ def test_noise_is_seeded_and_window_independent():
     b=build_signal(data,idx[45:50],"noisy",idx[40],3)
     np.testing.assert_array_equal(a.values[5:10],b.values)
     assert not np.array_equal(a.values,build_signal(data,idx[40:60],"noisy",idx[40],4).values)
+
+
+def test_noise_matches_unclipped_gaussian_definition():
+    idx=pd.date_range("2024-01-01",periods=100,freq="30min",tz="UTC")
+    actual=np.array([0.0]*50+[200.0]*50)
+    data=pd.DataFrame({"actual":actual},index=idx)
+    expected=actual+np.random.default_rng(np.random.SeedSequence([2,2024])).normal(0,5,100)
+    signal=build_signal(data,idx,"noisy",idx[0],2)
+    np.testing.assert_allclose(signal.values,expected)
+    assert (signal.values<0).any()

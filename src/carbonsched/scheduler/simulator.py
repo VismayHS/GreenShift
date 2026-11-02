@@ -108,6 +108,14 @@ def run_backtest(data: pd.DataFrame, sizes: list[dict], config: dict,
         "api_fallback":"raw completed actual period 24h earlier; if still missing, P0 for the whole window",
         "oracle_limitation":"perfect-information benchmark; heuristic multi-job policies are not a proven global optimum",
         "night_count_convention":"731 candidate dates; boundary nights and actual outages are reported as skips",
+        "replication":{
+            "energy":"1 kWh normalization, not a measurement or fleet estimate",
+            "job":"wiesner_s1", "duration_minutes":30, "baseline":"01:00 Europe/London",
+            "window":"candidate START times within +/- window_h; deadline includes the final 30-minute run",
+            "dst":"first 01:00 on autumn fold; nonexistent spring 01:00 normalizes to 02:00 BST",
+            "comparison":"2024-25 data; not a reproduction of the paper's 2020 numerical results"
+        },
+        "noise":"actual + independent Gaussian noise, sigma=0.05*annual mean actual; no clipping; seeds 0..9",
         "invariants_checked":"every emitted plan: exact slots, capacity, release, deadline, fixed job energy",
     }
     return frame,meta,pd.DataFrame(audits)

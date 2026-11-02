@@ -24,13 +24,13 @@ from carbonsched.workloads.spark_jobs import register_tpcds, run_job
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--sf", type=int, default=5)
-    parser.add_argument("--cores", default="8")
+    parser.add_argument("--cores", default="4")
     parser.add_argument("--driver-memory", default="8g")
     parser.add_argument("--seed", type=int, default=20261031)
     parser.add_argument("--max-runs", type=int, default=15)
     parser.add_argument("--room-conditions", default="unknown; not supplied")
     parser.add_argument("--conditions-confirmed", action="store_true",
-                        help="Operator confirms AC, performance mode and quiet background apps")
+                        help="Operator authorizes the session with known and unknown conditions recorded")
     args = parser.parse_args()
     if not args.conditions_confirmed:
         parser.error("Confirm physical measurement conditions with --conditions-confirmed")
@@ -39,7 +39,7 @@ def main():
     info = machine_info(args.room_conditions)
     require_rapl(info)
     info.update(scale_factor=args.sf, seed=args.seed, cores=args.cores,
-                driver_memory=args.driver_memory, operator_conditions_confirmed=True,
+                driver_memory=args.driver_memory, operator_session_authorized=True,
                 git_commit=subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=PROJECT_ROOT, text=True).strip(),
                 status="in_progress", extra_runs=[], energy_basis="attributable CPU-package kWh")
     RESULTS_DIR.mkdir(exist_ok=True)
