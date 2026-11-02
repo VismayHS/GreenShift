@@ -1,5 +1,5 @@
 {
-  "status": "timed; campaign must verify >=30 s per run",
+  "status": "pilot calibrated; final campaign quality gate required",
   "window": {
     "release_local": "22:00",
     "deadline_local": "07:00",
@@ -19,8 +19,9 @@
       ],
       "character": "light BI dashboards",
       "interruptible": false,
-      "repeats": 6,
-      "timing_pass_seconds": 10.427477200020803
+      "repeats": 18,
+      "timing_pass_seconds": 10.427477200020803,
+      "pilot_seconds": 43.65870666503906
     },
     {
       "name": "customer_analytics",
@@ -31,8 +32,9 @@
       ],
       "character": "heavy multi-year customer aggregation",
       "interruptible": false,
-      "repeats": 2,
-      "timing_pass_seconds": 30.224441599973943
+      "repeats": 6,
+      "timing_pass_seconds": 30.224441599973943,
+      "pilot_seconds": 57.37921357154846
     },
     {
       "name": "inventory_supply_chain",
@@ -46,8 +48,9 @@
       ],
       "character": "inventory joins",
       "interruptible": false,
-      "repeats": 2,
-      "timing_pass_seconds": 40.708148500008974
+      "repeats": 5,
+      "timing_pass_seconds": 40.708148500008974,
+      "pilot_seconds": 72.34713697433472
     },
     {
       "name": "cross_channel_promo",
@@ -62,8 +65,9 @@
       ],
       "character": "union of three sales channels, very heavy",
       "interruptible": true,
-      "repeats": 2,
-      "timing_pass_seconds": 52.99357549994602
+      "repeats": 5,
+      "timing_pass_seconds": 52.99357549994602,
+      "pilot_seconds": 111.80132675170898
     },
     {
       "name": "returns_audit",
@@ -77,9 +81,11 @@
       ],
       "character": "returns and shipping lag",
       "interruptible": false,
-      "repeats": 3,
-      "timing_pass_seconds": 22.226968899951316
+      "repeats": 9,
+      "timing_pass_seconds": 22.226968899951316,
+      "pilot_seconds": 63.74746775627136
     }
   ],
-  "scale_factor": 5
+  "scale_factor": 1,
+  "scale_factor_reason": "SF5 query timing succeeded, but two sustained SF5 campaigns reported Java heap exhaustion; SF1 fallback permitted by TEAM_PLAN R0c."
 }

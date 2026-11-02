@@ -1,0 +1,78 @@
+{
+  "date_utc": "2026-11-02T19:18:46.377444+00:00",
+  "sf": 1,
+  "cores": "4",
+  "driver_memory": "8g",
+  "purpose": "pilot only; excluded from measurement statistics",
+  "jobs": [
+    {
+      "job": "daily_sales_report",
+      "single_batch_probes_s": [
+        11.476812362670898,
+        3.280885934829712
+      ],
+      "trials": [
+        {
+          "repeats": 14,
+          "duration_s": 39.454180002212524
+        },
+        {
+          "repeats": 18,
+          "duration_s": 43.65870666503906
+        }
+      ]
+    },
+    {
+      "job": "customer_analytics",
+      "single_batch_probes_s": [
+        15.061880350112915,
+        9.712825298309326
+      ],
+      "trials": [
+        {
+          "repeats": 6,
+          "duration_s": 57.37921357154846
+        }
+      ]
+    },
+    {
+      "job": "inventory_supply_chain",
+      "single_batch_probes_s": [
+        18.737968921661377,
+        15.237100601196289
+      ],
+      "trials": [
+        {
+          "repeats": 5,
+          "duration_s": 72.34713697433472
+        }
+      ]
+    },
+    {
+      "job": "cross_channel_promo",
+      "single_batch_probes_s": [
+        27.924602508544922,
+        23.84080696105957
+      ],
+      "trials": [
+        {
+          "repeats": 5,
+          "duration_s": 111.80132675170898
+        }
+      ]
+    },
+    {
+      "job": "returns_audit",
+      "single_batch_probes_s": [
+        10.26584529876709,
+        6.494033098220825
+      ],
+      "trials": [
+        {
+          "repeats": 9,
+          "duration_s": 63.74746775627136
+        }
+      ]
+    }
+  ]
+}
