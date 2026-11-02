@@ -8,7 +8,8 @@ The frontend is unchanged. No push is performed by these commands.
 
 Use Python 3.12 and a portable JDK 21 under `.tools/jdk-21*`, or a supported
 system JDK. The tested machine is Windows 11, Intel i5-13450HX, approximately
-24 GB RAM. Spark uses eight local workers and an 8 GB driver heap.
+24 GB RAM. The initial query timing pass used eight local workers. The final
+campaign uses four workers and an 8 GB driver heap, with bounded SQL/UI history.
 Install the dependencies from the repository root:
 
 ```powershell
@@ -35,7 +36,7 @@ No external drive is required by the source.
 ```powershell
 .venv\Scripts\python scripts\generate_tpcds.py --sf 5
 .venv\Scripts\python scripts\time_queries.py --sf 5 --cores 8 --driver-memory 8g --finalize
-.venv\Scripts\python scripts\measure_jobs.py --sf 5 --cores 8 --driver-memory 8g --conditions-confirmed --room-conditions "Describe the actual conditions"
+.venv\Scripts\python scripts\measure_jobs.py --sf 5 --cores 4 --driver-memory 8g --conditions-confirmed --room-conditions "Describe the actual conditions"
 ```
 
 The timing command runs all 99 queries once and records every duration. The
@@ -51,6 +52,13 @@ powers times each measured duration. If duration or attributable-energy CV
 is at least 10%, extra runs are added and their reason recorded, up to the
 configured limit (15 per job by default). No outliers are silently discarded.
 An unsuccessful quality gate returns a nonzero exit code.
+
+The initial eight-worker campaign was invalidated after Java heap exhaustion.
+All of that attempt's readings and its log are retained under
+`results/measurement_attempts/2026-11-02-memory-pressure/`. None of its rows are
+pooled with the restarted campaign. SQL execution history is capped at 10;
+stage metrics are attributed by stage ID rather than subtraction of unbounded
+cumulative UI totals, so eviction of old stages cannot create negative metrics.
 
 Outputs:
 - `results/measurements.csv`: actual per-run readings, timestamps, repeat counts,

@@ -48,4 +48,10 @@ First test (CPU burn, 12 processes): RAPL 68.9 J, model 69.2 J, battery 20.6 J (
 
 ## Why this matters for the scheduler
 
-Emissions = E × CI(t). Shifting does not change E (same job). It changes CI(t). The **percentage** saving therefore does not depend on the energy figure: it depends only on job duration (how many half-hour slots the job spans) and the window. Energy measurement turns % into grams and lets us rank which jobs are worth delaying (big E × big CI spread).
+Emissions = E × CI(t). For a fixed single-job schedule, E cancels from the
+percentage saving. For multiple jobs, relative job energies weight the aggregate
+saving and influence P4's ordering. Multiplying every energy by the same factor
+preserves percentages only if durations and placements stay fixed. The fleet
+model scales durations as well as energy, so changing SCALE can change both
+feasibility and percentage savings. Energy measurement supplies the attributable
+kWh used for ranking and grams, rather than an assumed equal-power weighting.
