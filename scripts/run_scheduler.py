@@ -104,4 +104,6 @@ def main():
 
 
 if __name__=="__main__":
-    main()
+    from carbonsched.energy.preflight import awake_session
+    with awake_session():
+        main()

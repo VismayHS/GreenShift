@@ -16,7 +16,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 from carbonsched import PROJECT_ROOT, RESULTS_DIR
 from carbonsched.energy import EnergyMeter
 from carbonsched.energy.campaign import summarize, subtract_idle, fit_model
-from carbonsched.energy.preflight import machine_info, require_rapl
+from carbonsched.energy.preflight import machine_info, require_rapl, awake_session
 from carbonsched.env import spark_session
 from carbonsched.workloads.spark_jobs import register_tpcds, run_job
 
@@ -131,4 +131,5 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    with awake_session():
+        main()

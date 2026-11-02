@@ -6,12 +6,29 @@ import json
 import platform
 import shutil
 import subprocess
+from contextlib import contextmanager
 from importlib.metadata import version
 from datetime import datetime, timezone
 
 import psutil
 
 from .sensors import try_rapl
+
+
+@contextmanager
+def awake_session():
+    """Prevent automatic Windows sleep during a measured session; restore on exit."""
+    previous = None
+    if platform.system() == "Windows":
+        import ctypes
+        previous = ctypes.windll.kernel32.SetThreadExecutionState(0x80000001)
+        if not previous:
+            raise RuntimeError("Unable to prevent sleep during measurement")
+    try:
+        yield
+    finally:
+        if previous is not None:
+            ctypes.windll.kernel32.SetThreadExecutionState(previous)
 
 
 def _powershell(command: str):
