@@ -16,12 +16,12 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 from carbonsched import PROJECT_ROOT, RESULTS_DIR
 from carbonsched.energy import EnergyMeter
 from carbonsched.energy.campaign import summarize, subtract_idle, fit_model
-from carbonsched.energy.preflight import machine_info, require_rapl, awake_session
+from carbonsched.energy.preflight import machine_info, require_rapl, awake_session, SessionGuard
 from carbonsched.env import spark_session
 from carbonsched.workloads.spark_jobs import register_tpcds, run_job
 
 
-def main():
+def main(guard):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--sf", type=int, help="defaults to the calibrated catalogue scale factor")
     parser.add_argument("--cores", default="4")
@@ -59,10 +59,12 @@ def main():
         meta_path.write_text(json.dumps(info, indent=2), encoding="utf-8")
 
     def idle(label):
+        guard.check()
         print(f"{label}: 60 seconds", flush=True)
         with EnergyMeter(label, interval_s=1) as meter:
             time.sleep(60)
         result = meter.result
+        guard.check()
         if result.rapl_pkg_j is None:
             raise RuntimeError("RAPL lost during idle; refusing model substitution")
         return result.rapl_pkg_j / result.duration_s
@@ -73,15 +75,19 @@ def main():
         register_tpcds(spark, f"sf{args.sf}")
         info["idle_start_w"] = idle("idle_start")
         for job in jobs:
+            guard.check()
             print(f"Warmup {job['name']}", flush=True)
             run_job(spark, job["name"], job["queries"], repeats=job.get("repeats", 1))
+            guard.check()
         queue = jobs * 5
         rng.shuffle(queue)
         while queue:
             for job in queue:
                 time.sleep(20)
+                guard.check()
                 record = run_job(spark, job["name"], job["queries"],
                                  idle_w=info["idle_start_w"], repeats=job.get("repeats", 1))
+                guard.check()
                 if record["energy_source"] != "rapl":
                     raise RuntimeError("RAPL lost; refusing model substitution")
                 record.update(timestamp_utc=datetime.now(timezone.utc).isoformat(),
@@ -131,5 +137,5 @@ def main():
 
 
 if __name__ == "__main__":
-    with awake_session():
-        main()
+    with awake_session(), SessionGuard() as guard:
+        main(guard)

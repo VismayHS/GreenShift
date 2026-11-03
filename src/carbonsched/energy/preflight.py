@@ -6,6 +6,8 @@ import json
 import platform
 import shutil
 import subprocess
+import threading
+import time
 from contextlib import contextmanager
 from importlib.metadata import version
 from datetime import datetime, timezone
@@ -13,6 +15,47 @@ from datetime import datetime, timezone
 import psutil
 
 from .sensors import try_rapl
+
+
+def validate_session_sample(ac_power: bool | None, elapsed_s: float) -> None:
+    """Invalidate measurements across a power disconnect or suspended sampler."""
+    if ac_power is False:
+        raise RuntimeError("AC disconnected during campaign; restart the complete session")
+    if elapsed_s > 10:
+        raise RuntimeError("Session monitoring interrupted for over 10 seconds; possible sleep; restart campaign")
+
+
+class SessionGuard:
+    """Continuously watch conditions, reporting errors at workload boundaries."""
+
+    def __enter__(self):
+        self._stop = threading.Event()
+        self._error = None
+        self._thread = threading.Thread(target=self._watch, daemon=True)
+        self._thread.start()
+        return self
+
+    def _watch(self):
+        previous = time.monotonic()
+        while not self._stop.wait(1):
+            now = time.monotonic()
+            try:
+                battery = psutil.sensors_battery()
+                validate_session_sample(battery.power_plugged if battery else None, now - previous)
+            except Exception as error:
+                self._error = error
+                return
+            previous = now
+
+    def check(self):
+        if self._error is not None:
+            raise self._error
+
+    def __exit__(self, *exc):
+        self._stop.set()
+        self._thread.join()
+        if not exc[0]:
+            self.check()
 
 
 @contextmanager

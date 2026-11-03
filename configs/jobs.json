@@ -1,5 +1,5 @@
 {
-  "status": "pilot calibrated; final campaign quality gate required",
+  "status": "Conservative doubled batches; final campaign quality gate required",
   "window": {
     "release_local": "22:00",
     "deadline_local": "07:00",
@@ -19,9 +19,10 @@
       ],
       "character": "light BI dashboards",
       "interruptible": false,
-      "repeats": 18,
+      "repeats": 36,
       "timing_pass_seconds": 10.427477200020803,
-      "pilot_seconds": 43.65870666503906
+      "prior_pilot_seconds": 43.65870666503906,
+      "repeat_adjustment": "Doubled after power-transition attempt exposed faster warmed runtimes; final quality gate still required."
     },
     {
       "name": "customer_analytics",
@@ -32,9 +33,10 @@
       ],
       "character": "heavy multi-year customer aggregation",
       "interruptible": false,
-      "repeats": 6,
+      "repeats": 12,
       "timing_pass_seconds": 30.224441599973943,
-      "pilot_seconds": 57.37921357154846
+      "prior_pilot_seconds": 57.37921357154846,
+      "repeat_adjustment": "Doubled after power-transition attempt exposed faster warmed runtimes; final quality gate still required."
     },
     {
       "name": "inventory_supply_chain",
@@ -48,9 +50,10 @@
       ],
       "character": "inventory joins",
       "interruptible": false,
-      "repeats": 5,
+      "repeats": 10,
       "timing_pass_seconds": 40.708148500008974,
-      "pilot_seconds": 72.34713697433472
+      "prior_pilot_seconds": 72.34713697433472,
+      "repeat_adjustment": "Doubled after power-transition attempt exposed faster warmed runtimes; final quality gate still required."
     },
     {
       "name": "cross_channel_promo",
@@ -65,9 +68,10 @@
       ],
       "character": "union of three sales channels, very heavy",
       "interruptible": true,
-      "repeats": 5,
+      "repeats": 10,
       "timing_pass_seconds": 52.99357549994602,
-      "pilot_seconds": 111.80132675170898
+      "prior_pilot_seconds": 111.80132675170898,
+      "repeat_adjustment": "Doubled after power-transition attempt exposed faster warmed runtimes; final quality gate still required."
     },
     {
       "name": "returns_audit",
@@ -81,9 +85,10 @@
       ],
       "character": "returns and shipping lag",
       "interruptible": false,
-      "repeats": 9,
+      "repeats": 18,
       "timing_pass_seconds": 22.226968899951316,
-      "pilot_seconds": 63.74746775627136
+      "prior_pilot_seconds": 63.74746775627136,
+      "repeat_adjustment": "Doubled after power-transition attempt exposed faster warmed runtimes; final quality gate still required."
     }
   ],
   "scale_factor": 1,

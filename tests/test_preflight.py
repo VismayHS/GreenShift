@@ -2,6 +2,16 @@ import pytest
 from carbonsched.energy.preflight import require_rapl
 
 
+def test_session_rejects_disconnect_and_suspension():
+    from carbonsched.energy.preflight import validate_session_sample
+    validate_session_sample(True, 1.1)
+    validate_session_sample(None, 1.1)  # desktop with no battery
+    with pytest.raises(RuntimeError, match="AC disconnected"):
+        validate_session_sample(False, 1.1)
+    with pytest.raises(RuntimeError, match="possible sleep"):
+        validate_session_sample(True, 60)
+
+
 def test_measurement_refuses_silent_estimates_and_battery():
     with pytest.raises(RuntimeError, match="RAPL unavailable"):
         require_rapl({"sensor": None})

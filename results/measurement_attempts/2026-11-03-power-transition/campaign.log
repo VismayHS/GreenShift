@@ -1,0 +1,42 @@
+WARNING: Using incubator modules: jdk.incubator.vector
+26/11/03 09:35:14 WARN Shell: Did not find winutils.exe: java.io.FileNotFoundException: java.io.FileNotFoundException: HADOOP_HOME and hadoop.home.dir are unset. -see https://cwiki.apache.org/confluence/display/HADOOP2/WindowsProblems
+Using Spark's default log4j profile: org/apache/spark/log4j2-defaults.properties
+Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
+26/11/03 09:35:15 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+26/11/03 09:35:23 WARN SparkStringUtils: Truncated the string representation of a plan since it was too large. This behavior can be adjusted by setting 'spark.sql.debug.maxToStringFields'.
+idle_start: 60 seconds
+Warmup daily_sales_report
+Warmup customer_analytics
+Warmup inventory_supply_chain
+Warmup cross_channel_promo
+Warmup returns_audit
+cross_channel_promo run 1: 132.7s, 2525.8 J
+daily_sales_report run 1: 53.4s, 996.6 J
+cross_channel_promo run 2: 115.2s, 2701.0 J
+daily_sales_report run 2: 50.5s, 1025.4 J
+cross_channel_promo run 3: 112.2s, 2859.8 J
+inventory_supply_chain run 1: 81.8s, 1867.2 J
+returns_audit run 1: 70.2s, 1383.9 J
+cross_channel_promo run 4: 115.8s, 2324.3 J
+returns_audit run 2: 68.5s, 1255.1 J
+daily_sales_report run 3: 50.7s, 1049.4 J
+customer_analytics run 1: 61.6s, 1184.0 J
+returns_audit run 3: 69.7s, 1269.8 J
+returns_audit run 4: 63.5s, 1143.8 J
+customer_analytics run 2: 62.5s, 1190.2 J
+daily_sales_report run 4: 55.1s, 891.2 J
+inventory_supply_chain run 2: 84.2s, 1632.9 J
+daily_sales_report run 5: 51.3s, 1042.2 J
+cross_channel_promo run 5: 124.8s, 2415.4 J
+customer_analytics run 3: 32.1s, 1740.7 J
+customer_analytics run 4: 26.5s, 1389.1 J
+Traceback (most recent call last):
+  File "C:\Users\sharv\Documents\Codex\2026-10-31\https-github-com-vismayhs-greenshift-https-2\work\GreenShift\scripts\measure_jobs.py", line 135, in <module>
+    main()
+  File "C:\Users\sharv\Documents\Codex\2026-10-31\https-github-com-vismayhs-greenshift-https-2\work\GreenShift\scripts\measure_jobs.py", line 95, in main
+    raise RuntimeError("Job shorter than 30 s; increase catalogue repeats and restart campaign")
+RuntimeError: Job shorter than 30 s; increase catalogue repeats and restart campaign
+SUCCESS: The process with PID 7064 (child process of PID 3556) has been terminated.
+SUCCESS: The process with PID 3556 (child process of PID 7072) has been terminated.
+SUCCESS: The process with PID 7072 (child process of PID 18636) has been terminated.
