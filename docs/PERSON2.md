@@ -36,12 +36,16 @@ No external drive is required by the source.
 ```powershell
 .venv\Scripts\python scripts\generate_tpcds.py --sf 5
 .venv\Scripts\python scripts\time_queries.py --sf 5 --cores 8 --driver-memory 8g --finalize
-.venv\Scripts\python scripts\measure_jobs.py --sf 5 --cores 4 --driver-memory 8g --conditions-confirmed --room-conditions "Describe the actual conditions"
+.venv\Scripts\python scripts\generate_tpcds.py --sf 1
+.venv\Scripts\python scripts\prepare_campaign.py --sf 1 --cores 4 --driver-memory 8g
+.venv\Scripts\python scripts\measure_jobs.py --sf 1 --cores 4 --driver-memory 8g --conditions-confirmed --room-conditions "Describe the actual conditions"
 ```
 
-The timing command runs all 99 queries once and records every duration. The
-catalogue repeats each original query group enough times to target at least
-60 seconds before warm-cache effects. Repetition is part of the defined
+The SF5 timing command runs all 99 queries once and records every duration.
+Two sustained SF5 attempts exhausted the Java heap, so the final catalogue uses
+the SF1 fallback permitted by TEAM_PLAN R0c. `prepare_campaign.py` measures
+warmed SF1 batches and chooses repeat counts with a margin above 30 seconds.
+The SF5 timing pass remains recorded separately. Repetition is part of the defined
 representative workload, not an artificial multiplier on measured energy.
 Every accepted campaign run must actually last at least 30 seconds.
 
@@ -56,7 +60,11 @@ An unsuccessful quality gate returns a nonzero exit code.
 The initial eight-worker campaign was invalidated after Java heap exhaustion.
 All of that attempt's readings and its log are retained under
 `results/measurement_attempts/2026-11-02-memory-pressure/`. None of its rows are
-pooled with the restarted campaign. SQL execution history is capped at 10;
+pooled with the restarted campaign. The second SF5 attempt is preserved in
+`results/measurement_attempts/2026-11-02-sf5-short-run/`; it also exhausted the
+heap and failed the minimum-duration gate. A subsequent SF1 warmup session
+was interrupted by a Windows restart before any measured rows; its log is in
+`results/measurement_attempts/2026-11-03-interrupted-reboot/`. SQL execution history is capped at 10;
 stage metrics are attributed by stage ID rather than subtraction of unbounded
 cumulative UI totals, so eviction of old stages cannot create negative metrics.
 
@@ -86,7 +94,9 @@ CPU-package RAPL excludes whole-system energy. The fitted model uses
 
 `configs/scheduler.json` controls dates, capacities, policies, forecast modes,
 seeds, SCALE and PUE. A null SCALE targets a two-hour heaviest job from the
-measured mean. Duration is rounded up to half-hours; energy is conserved:
+measured mean, constrained so the rounded fleet fits the shortest DST night
+at the minimum configured capacity. The target and adjustment are recorded
+in metadata. Duration is rounded up to half-hours; energy is conserved:
 
 - duration_slots = ceil(mean duration_s × SCALE / 1800)
 - energy_kwh = mean attributable_kwh × SCALE × PUE
@@ -161,7 +171,7 @@ The stored fallback is visibly identified. For a dry-run with a stale offline
 copy, its recorded date is replayed and explicitly labelled **historical**.
 A stored forecast is never silently relabelled as current.
 
-`--now` runs one real SF5 job immediately under RAPL and never sleeps until a
+`--now` runs one real job at the calibrated catalogue scale (SF1 here) immediately under RAPL and never sleeps until a
 planned start. It compares the same measured laptop energy at current and
 planned forecast intensities, clearly labelled counterfactual estimates.
 Actual emissions are overlap-weighted from actual API values if available;
@@ -179,3 +189,23 @@ Person 3 should consume the shared parquet and metadata, build confidence
 intervals over nights, and update the website/report from those results.
 Mac execution has not been claimed from a Windows-only validation.
 The optional P5 ILP and unplugged battery cross-check are not required.
+
+## Requirement evidence
+
+| Requirement | Implementation and evidence |
+|---|---|
+| R0a–b hardware and conditions | `scripts/check_machine.py`, campaign metadata, `tests/test_preflight.py`; actual Intel RAPL, AC and selected power mode recorded |
+| R0c workload selection | All 99 SF5 timings in `results/tpcds_sf5_windows_times.json`; SF1 warm-cache pilot and explicit memory-failure fallback |
+| R0d–e measurement and quality | `scripts/measure_jobs.py`, raw/summary CSVs, idle bookends, randomized repeats, t intervals and fitted model; `tests/test_campaign.py`, `tests/test_energy.py`, `tests/test_spark_metrics.py` |
+| R1–2 setup and time model | `requirements-dev.txt`, UTC half-hours and UK DST windows; `tests/test_carbon.py`, `tests/test_models.py` |
+| R3 policies | `scheduler/policies.py`; known-answer case, constant CI and randomized capacity/deadline tests in `tests/test_policies.py` |
+| R4 forecast modes | `scheduler/forecast.py`; lagged fallback, no future-actual dependence and ten deterministic noisy seeds in `tests/test_forecast.py` |
+| R5 measured sizing | `scheduler/sizing.py`; measured attributable kWh and duration scaling with DST feasibility in `tests/test_sizing.py` |
+| R6 complete simulation | `scripts/run_backtest.py`; exact shared schema, source hashes and slot audit; `tests/test_simulator.py` |
+| R7 paper scenario | `scheduler/replication.py`; all five flexibility windows and UK clock-change cases in `tests/test_replication.py` |
+| R8 independent checks | `scripts/verify_results.py`, `results/verification.json`, corruption detection in `tests/test_verification.py` |
+| R15 live/offline demo | `scripts/run_scheduler.py`, `scripts/score_demo.py`, saved plans; actual-versus-forecast accounting in `tests/test_demo.py` |
+
+The final campaign and full-result verification must pass before the numerical
+outputs are treated as final. Person 3's Mac test, report, website export and
+submission work remain separate from this Windows implementation.
