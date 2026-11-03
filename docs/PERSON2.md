@@ -47,7 +47,9 @@ the SF1 fallback permitted by TEAM_PLAN R0c. `prepare_campaign.py` measures
 warmed SF1 batches and chooses repeat counts with a margin above 30 seconds.
 The SF5 timing pass remains recorded separately. Repetition is part of the defined
 representative workload, not an artificial multiplier on measured energy.
-Every accepted campaign run must actually last at least 30 seconds.
+Every accepted campaign run must actually last at least 30 seconds. Final
+repeat counts were doubled after a power-transition attempt exposed faster
+warmed runtimes; the original pilot remains labelled separately.
 
 The campaign takes a 60-second idle baseline, warms each job once, and measures
 five randomized runs of each job with 20-second cooldowns. A second 60-second
@@ -64,7 +66,12 @@ pooled with the restarted campaign. The second SF5 attempt is preserved in
 `results/measurement_attempts/2026-11-02-sf5-short-run/`; it also exhausted the
 heap and failed the minimum-duration gate. A subsequent SF1 warmup session
 was interrupted by a Windows restart before any measured rows; its log is in
-`results/measurement_attempts/2026-11-03-interrupted-reboot/`. SQL execution history is capped at 10;
+`results/measurement_attempts/2026-11-03-interrupted-reboot/`. A later attempt
+failed on a sub-30-second run, with Windows power-source/sleep events observed
+in the session; all its rows and event evidence are retained in
+`results/measurement_attempts/2026-11-03-power-transition/`. Continuous AC and
+sampler-gap monitoring now rejects disconnects and possible sleep interruptions.
+SQL execution history is capped at 10;
 stage metrics are attributed by stage ID rather than subtraction of unbounded
 cumulative UI totals, so eviction of old stages cannot create negative metrics.
 
