@@ -48,19 +48,28 @@ class MeterResult:
         return self.rapl_pkg_j if self.rapl_pkg_j is not None else self.model_j
 
     @property
-    def attributable_j(self) -> float:
+    def attributable_j(self) -> float | None:
         if self.idle_w is None:
-            return self.best_j
+            return None
         return max(self.best_j - self.idle_w * self.duration_s, 0.0)
 
     @property
     def kwh(self) -> float:
+        """Gross CPU-package kWh (or explicitly labelled model fallback)."""
         return self.best_j / 3.6e6
+
+    @property
+    def attributable_kwh(self) -> float | None:
+        """Idle-subtracted energy used by the scheduler; PUE is applied later."""
+        value = self.attributable_j
+        return value / 3.6e6 if value is not None else None
 
     def summary(self) -> dict:
         d = asdict(self)
         d.pop("samples")
-        d.update(best_j=self.best_j, attributable_j=self.attributable_j, kwh=self.kwh)
+        d.update(best_j=self.best_j, attributable_j=self.attributable_j, kwh=self.kwh,
+                 gross_kwh=self.kwh, attributable_kwh=self.attributable_kwh,
+                 energy_source="rapl" if self.rapl_pkg_j is not None else "model_estimate")
         return d
 
 
@@ -68,6 +77,8 @@ class EnergyMeter:
     def __init__(self, label: str = "run", interval_s: float = 0.5,
                  model: LinearPowerModel | None = None, idle_w: float | None = None):
         self.label = label
+        if interval_s <= 0:
+            raise ValueError("interval_s must be positive")
         self.interval_s = interval_s
         self.model = model or LinearPowerModel()
         self.idle_w = idle_w
@@ -78,39 +89,58 @@ class EnergyMeter:
     def _sample_loop(self) -> None:
         battery = try_battery()
         psutil.cpu_percent(None)
-        while not self._stop.wait(self.interval_s):
-            s = {"t": time.time(), "util": psutil.cpu_percent(None) / 100.0}
-            if self._rapl is not None:
-                s.update({f"rapl_{k}_j": v for k, v in self._rapl.read_joules().items()})
-            if battery is not None:
-                s.update(battery.read())
-            self._samples.append(s)
+        try:
+            while not self._stop.wait(self.interval_s):
+                s = {"t": self._t0 + time.perf_counter() - self._mono0,
+                     "util": psutil.cpu_percent(None) / 100.0}
+                if self._rapl is not None:
+                    s.update({f"rapl_{k}_j": v for k, v in self._rapl.read_joules().items()})
+                if battery is not None:
+                    s.update(battery.read())
+                self._samples.append(s)
+        except Exception as error:
+            self._sample_error = error
+        finally:
+            if battery is not None and hasattr(battery, "close"):
+                battery.close()
 
     def __enter__(self) -> "EnergyMeter":
+        self._samples = []
+        self._stop.clear()
+        self._sample_error = None
         self._rapl = try_rapl()
         self._e0 = self._rapl.read_joules() if self._rapl else None
         self._t0 = time.time()
+        self._mono0 = time.perf_counter()
         self._thread = threading.Thread(target=self._sample_loop, daemon=True)
         self._thread.start()
         return self
 
     def __exit__(self, *exc) -> None:
-        t1 = time.time()
+        t1 = self._t0 + time.perf_counter() - self._mono0
         self._stop.set()
         self._thread.join()  # join first: the PDH query handle is not shared across threads
-        e1 = self._rapl.read_joules() if self._rapl else None
-        self.result = self._finish(t1, e1)
+        try:
+            e1 = self._rapl.read_joules() if self._rapl else None
+            if self._sample_error is not None and not exc[0]:
+                raise RuntimeError("Energy sampling failed") from self._sample_error
+            self.result = self._finish(t1, e1)
+        finally:
+            if self._rapl:
+                self._rapl.close()
 
     def _finish(self, t1: float, e1: dict | None) -> MeterResult:
         duration = t1 - self._t0
         s = self._samples
-        ts = np.array([x["t"] for x in s]) if s else np.array([self._t0, t1])
-        util = np.array([x["util"] for x in s]) if s else np.zeros(2)
+        # Hold the nearest observed power at the two boundaries. Without these
+        # endpoints a short run loses up to two sample intervals of energy.
+        ts = np.array([self._t0, *[x["t"] for x in s], t1])
+        util = np.array([s[0]["util"], *[x["util"] for x in s], s[-1]["util"]]) if s else np.zeros(2)
 
         battery_j = None
         dis = [x.get("discharge_w") for x in s]
         if s and all(v is not None for v in dis):
-            battery_j = float(np.trapezoid(np.array(dis), ts))
+            battery_j = float(np.trapezoid(np.array([dis[0], *dis, dis[-1]]), ts))
 
         return MeterResult(
             label=self.label,
@@ -120,7 +150,7 @@ class EnergyMeter:
             rapl_cores_j=(e1["PP0"] - self._e0["PP0"]) if e1 else None,
             battery_j=battery_j,
             model_j=self.model.energy_j(ts, util) if len(ts) > 1 else 0.0,
-            mean_cpu_util=float(util.mean()) if len(util) else 0.0,
+            mean_cpu_util=float(np.trapezoid(util, ts) / duration) if duration > 0 else 0.0,
             idle_w=self.idle_w,
             samples=s,
         )

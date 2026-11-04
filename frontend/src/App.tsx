@@ -1,100 +1,80 @@
 import { useEffect, useState } from 'react'
-import { Story } from './pages/Story'
+import { BarChart3, BookOpenCheck, Cpu, FlaskConical, Gauge, LayoutDashboard, MoonStar, Scale, Waves } from 'lucide-react'
+import AppShell, { RailGroup, RailItem, type Crumb } from './vx/AppShell'
+import { Stamp } from './vx/primitives'
+import { useResults } from './lib/hooks'
+import { TEAM } from './lib/team'
+import { Summary } from './pages/Summary'
+import { Carbon } from './pages/Carbon'
+import { EnergyPage } from './pages/Energy'
+import { SchedulerPage } from './pages/Scheduler'
+import { ResultsPage } from './pages/Results'
+import { Replication } from './pages/Replication'
 import { Tonight } from './pages/Tonight'
+import { Governance } from './pages/Governance'
 
-type Route = 'story' | 'tonight'
-const routeOf = (): Route => (location.hash.startsWith('#/tonight') ? 'tonight' : 'story')
 
-export const TEAM = [
-  { name: 'Vismay HS', srn: 'PES1UG24AM325' },
-  { name: 'Ashwin C H', srn: 'PES1UG24AM900' },
-  { name: 'Sharvesh K', srn: 'PES1UG24AM260' },
-]
+const ROUTES = {
+  '': { label: 'Summary', group: 'Overview', icon: LayoutDashboard, page: Summary },
+  carbon: { label: 'Carbon data', group: 'Evidence', icon: Waves, page: Carbon },
+  energy: { label: 'Energy measurement', group: 'Evidence', icon: Cpu, page: EnergyPage },
+  scheduler: { label: 'Scheduler', group: 'Evidence', icon: Gauge, page: SchedulerPage },
+  results: { label: 'Savings and delay', group: 'Results', icon: BarChart3, page: ResultsPage },
+  replication: { label: 'Paper replication', group: 'Results', icon: FlaskConical, page: Replication },
+  tonight: { label: 'Plan tonight', group: 'Live', icon: MoonStar, page: Tonight },
+  governance: { label: 'Responsible AI', group: 'Governance', icon: Scale, page: Governance },
+} as const
+type Route = keyof typeof ROUTES
+
+const routeOf = (): Route => {
+  const key = location.hash.replace(/^#\/?/, '').split(/[/?#]/)[0]
+  return (key in ROUTES ? key : '') as Route
+}
 
 export default function App() {
   const [route, setRoute] = useState<Route>(routeOf)
+  const results = useResults()
   useEffect(() => {
     const on = () => {
       setRoute(routeOf())
-      if (!location.hash.includes('#s-')) window.scrollTo({ top: 0 })
+      window.scrollTo({ top: 0 })
     }
     addEventListener('hashchange', on)
     return () => removeEventListener('hashchange', on)
   }, [])
+  useEffect(() => {
+    document.title = route ? `${ROUTES[route].label} · GreenShift` : 'GreenShift'
+  }, [route])
+
+  const Page = ROUTES[route].page
+  const groups = [...new Set(Object.values(ROUTES).map((r) => r.group))]
+  const crumbs: Crumb[] = route ? [{ label: 'GreenShift', href: '#/' }, { label: ROUTES[route].label }] : [{ label: 'GreenShift' }, { label: 'Summary' }]
+  const status = results.data?.status
 
   return (
-    <>
-      <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:bg-ink focus:px-4 focus:py-2 focus:text-paper">
-        Skip to content
-      </a>
-      <header className="sticky top-0 z-40 bg-paper/95">
-        <nav className="mx-auto flex max-w-[1440px] items-center gap-4 px-4 sm:gap-6 py-3 sm:px-8" aria-label="Main">
-          <a href="#/" className="mr-auto text-[22px] font-extrabold tracking-tight text-ink no-underline">
-            GreenShift
-          </a>
-          <a href="#/" aria-current={route === 'story' ? 'page' : undefined} className="whitespace-nowrap text-[16px] text-ink no-underline hover:underline aria-[current=page]:font-bold sm:text-[17px]">
-            How it works
-          </a>
-          <a
-            href="#/tonight"
-            aria-current={route === 'tonight' ? 'page' : undefined}
-            className="whitespace-nowrap rounded-full bg-low px-4 py-2 text-[16px] font-bold sm:px-5 sm:text-[17px] text-paper no-underline transition-colors duration-200 hover:bg-low-2 active:scale-[0.97] motion-reduce:active:scale-100"
-          >
-            Plan tonight
-          </a>
-        </nav>
-      </header>
-      <main id="main">{route === 'tonight' ? <Tonight /> : <Story />}</main>
-      <Footer />
-    </>
-  )
-}
-
-function Footer() {
-  return (
-    <footer className="mt-32 bg-ink text-paper">
-      <div className="mx-auto max-w-[1440px] px-4 pb-10 pt-16 sm:px-8">
-        <div className="grid gap-10 text-[16px] leading-relaxed md:grid-cols-3">
-          <div>
-            <p className="font-bold">Built by</p>
-            <ul>
-              {TEAM.map((m) => (
-                <li key={m.srn}>
-                  {m.name} · {m.srn}
-                </li>
+    <AppShell
+      brand={{ name: 'GreenShift', tagline: 'Carbon-aware batch', href: '#/' }}
+      crumbs={crumbs}
+      actions={status === 'placeholder' ? <Stamp tone="lead" title="Job sizes are placeholders until the RAPL measurement campaign completes">Placeholder sizes</Stamp>
+        : status === 'measured' ? <Stamp tone="done">Measured sizes</Stamp> : null}
+      rail={
+        <>
+          {groups.map((g) => (
+            <RailGroup key={g} label={g}>
+              {(Object.entries(ROUTES) as [Route, (typeof ROUTES)[Route]][]).filter(([, r]) => r.group === g).map(([k, r]) => (
+                <RailItem key={k} href={`#/${k}`} label={r.label} icon={r.icon} active={route === k} highlight={k === 'tonight'} />
               ))}
-            </ul>
-            <p className="mt-3 text-paper/80">UE24AM343AB3 mini-project, Track G (Governance, Compliance and Sustainability).</p>
+            </RailGroup>
+          ))}
+          <div className="mt-8 border-t border-vx-rule px-4 pt-4 text-[13px] leading-relaxed text-vx-ink-3">
+            <div className="mb-1 flex items-center gap-1.5 font-vxmono text-[11px] uppercase tracking-[0.16em]"><BookOpenCheck className="h-3.5 w-3.5" aria-hidden="true" />Team</div>
+            {TEAM.map((m) => <div key={m.srn}>{m.name}</div>)}
+            <div className="mt-2">UE24AM343AB3 · Track G</div>
           </div>
-          <div>
-            <p className="font-bold">Data</p>
-            <p>
-              Carbon intensity data: Carbon Intensity API, NESO (CC BY 4.0). Cross-check: NESO historic generation mix (CC BY 4.0).
-            </p>
-            <p className="mt-3">Workload derived from TPC-DS; not comparable with published TPC-DS results.</p>
-          </div>
-          <div>
-            <p className="font-bold">Method and code</p>
-            <p>
-              Comparison study: Wiesner et al., “Let’s Wait Awhile”, Middleware ’21.{' '}
-              <a className="text-paper underline" href="https://arxiv.org/abs/2110.13234">
-                arXiv:2110.13234
-              </a>
-              .
-            </p>
-            <p className="mt-3">
-              Source:{' '}
-              <a className="text-paper underline" href="https://github.com/VismayHS/GreenShift">
-                github.com/VismayHS/GreenShift
-              </a>
-              . Number animation: React Bits CountUp (MIT + Commons Clause).
-            </p>
-          </div>
-        </div>
-        <p aria-hidden="true" className="mt-16 select-none text-[clamp(64px,17vw,260px)] font-extrabold leading-[0.8] tracking-[-0.05em] text-paper">
-          GreenShift
-        </p>
-      </div>
-    </footer>
+        </>
+      }
+    >
+      <Page />
+    </AppShell>
   )
 }

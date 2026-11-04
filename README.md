@@ -9,7 +9,43 @@ grid hours without missing deadlines.
 
 UE24AM343AB3 Mini-project, Track G (Governance, Compliance and Sustainability).
 
+## Quickstart: every number in the report, one command
+
+```bash
+python3.12 -m venv .venv && source .venv/bin/activate      # Windows: .venv\Scripts\activate
+pip install -r requirements-dev.txt
+python scripts/run_all.py --skip-measure                    # tests → backtest → audit → report → site data (~70 s)
+cd frontend && npm install && npm run dev                   # the website, http://localhost:5173
+```
+
+| Output | What it is |
+|---|---|
+| [report/report.md](report/report.md) | The savings report: method, scheduler, results, limitations, SCI |
+| [report/results_tables.md](report/results_tables.md) | Generated tables (savings with 95% CIs, delay, replication, regret) |
+| `report/figures/res_*.png` | Generated result figures |
+| [report/demo_script.md](report/demo_script.md) | 3-presenter demo plan with Q&A |
+| `frontend/` | Website (Exhibit Register design): Summary, Carbon data, Energy, Scheduler, Savings and delay, Paper replication, Plan tonight, Responsible AI |
+
+Without an accepted `results/measurements.csv`, job sizes are **placeholders** and every output says so.
+On the RAPL laptop, `python scripts/run_all.py` (no flag) measures first. Live planner: `python scripts/run_scheduler.py --dry-run` (add `--offline` without network).
+
 Start with [docs/HANDOFF.md](docs/HANDOFF.md): full context, research, decisions, status and setup on Linux/Hadoop.
+
+Person 2's implemented measurement, scheduling and verification commands are in
+[docs/PERSON2.md](docs/PERSON2.md). Run the completed campaign data through:
+
+```powershell
+.venv\Scripts\python -m pip install -r requirements-dev.txt
+.venv\Scripts\python -m pytest -q
+.venv\Scripts\python scripts\run_backtest.py
+.venv\Scripts\python scripts\verify_results.py
+.venv\Scripts\python scripts\run_scheduler.py --dry-run
+```
+
+The simulator exports the shared `results/backtest.parquet` contract plus metadata
+and a slot audit trail. It uses attributable RAPL energy when a completed campaign
+is present; otherwise it explicitly labels development placeholders. The report, the
+website and `scripts/run_all.py` read these outputs (see Quickstart above).
 
 ## Setup (Windows)
 
@@ -41,3 +77,11 @@ The story page explains the method with our own data; the Tonight view plans the
 | Electricity Maps (optional) | ODbL / non-commercial API | [datacards/electricity_maps.md](datacards/electricity_maps.md) |
 
 Workload derived from TPC-DS; results are not comparable with published TPC-DS results.
+
+Current execution status and remaining measurement acceptance: [Person 2 status](docs/PERSON2_STATUS.md).
+
+## Contributors
+
+- [Sharvesh K (@SharveshK1228)](https://github.com/SharveshK1228) — Person 2:
+  Spark workload and measurement tooling, RAPL safeguards, scheduling policies,
+  backtest simulation, tests, and live/offline demo commands.

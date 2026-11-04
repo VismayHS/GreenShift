@@ -1,5 +1,42 @@
 # 02: Measuring Spark job energy
 
+## Person 2 campaign status (2026-11-04)
+
+The current machine is Windows 11, Intel Core i5-13450HX, approximately 24 GB
+RAM, Spark 4.2.0 and portable JDK 21. RAPL is available. These facts are distinct
+from the earlier i5-12450H experiments below.
+
+All 99 SF5 queries were timed. Two sustained SF5 attempts exhausted the heap;
+the catalogue therefore uses the explicitly permitted SF1 fallback with repeated
+query groups. The latest catalogue doubles the warmed pilot repetitions to
+protect the minimum 30-second duration. This is a workload derived from TPC-DS;
+not comparable with published TPC-DS results.
+
+**No final measurement table is available yet.** Completed readings from the
+16-run attempt are preserved in
+`results/measurement_attempts/2026-11-03-user-paused-after16/`. The operator
+paused that session before its closing idle baseline and remaining repeats.
+A fresh 2026-11-04 campaign stopped during warmup when continuous monitoring
+detected AC disconnection; its metadata and log are preserved separately.
+Earlier heap, reboot and power-transition failures are retained as whole attempts.
+None is pooled into a final dataset or presented as a successful campaign.
+
+Final acceptance requires uninterrupted AC, the selected Best performance mode,
+60-second idle bookends, one warmup per job, at least five randomized measured
+runs per job, 20-second cooldowns, and the implemented duration/energy quality
+gates. Room temperature, cooling details and background application closure
+remain unknown, as authorized by the operator. Automatic sleep is inhibited;
+manual suspension or an AC disconnect invalidates the session.
+
+The final report must give gross package joules/kWh and idle-subtracted
+attributable joules/kWh, sample standard deviations, Student-t 95% confidence
+intervals, repeat counts, coefficients of variation and calibration R².
+Scheduling uses attributable CPU-package energy. No DRAM or whole-machine
+energy is silently added to this RAPL quantity. Synthetic placeholder validation
+outputs must not be quoted as measured savings.
+
+## Historical validation on the earlier machine
+
 ## The test machine
 
 | | |
@@ -48,4 +85,10 @@ First test (CPU burn, 12 processes): RAPL 68.9 J, model 69.2 J, battery 20.6 J (
 
 ## Why this matters for the scheduler
 
-Emissions = E × CI(t). Shifting does not change E (same job). It changes CI(t). The **percentage** saving therefore does not depend on the energy figure: it depends only on job duration (how many half-hour slots the job spans) and the window. Energy measurement turns % into grams and lets us rank which jobs are worth delaying (big E × big CI spread).
+Emissions = E × CI(t). For a fixed single-job schedule, E cancels from the
+percentage saving. For multiple jobs, relative job energies weight the aggregate
+saving and influence P4's ordering. Multiplying every energy by the same factor
+preserves percentages only if durations and placements stay fixed. The fleet
+model scales durations as well as energy, so changing SCALE can change both
+feasibility and percentage savings. Energy measurement supplies the attributable
+kWh used for ranking and grams, rather than an assumed equal-power weighting.

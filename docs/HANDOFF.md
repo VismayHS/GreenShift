@@ -1,6 +1,6 @@
 # GreenShift: complete project handoff (Carbon-Aware Batch Scheduling)
 
-**Last updated:** 2026-10-27 · **Repo:** [GreenShift](https://github.com/VismayHS/GreenShift)
+**Last updated:** 2026-11-04 · **Repo:** [GreenShift](https://github.com/VismayHS/GreenShift)
 **Course:** UE24AM343AB3 Big Data Systems & Responsible AI Engineering (Semester 5), Mini-project
 **Track:** G: Governance, Compliance and Sustainability
 
@@ -43,9 +43,9 @@ This file holds everything researched, decided, built and measured so far, plus 
 
 | Deliverable | Location | Status |
 |---|---|---|
-| Scheduler code | `src/carbonsched/scheduler/` + `scripts/` | ⏳ not started (design ready, §8) |
+| Scheduler code | `src/carbonsched/scheduler/` + `scripts/` | Implemented; Person 2 verification and reproduction guide in `docs/PERSON2.md` |
 | Measurement method | `src/carbonsched/energy/` + `notes/02_energy_measurement.md` | ✅ built & tested on Windows |
-| Savings report | `report/` | ⏳ |
+| Savings report | `report/report.md` + `report/results_tables.md` + `report/figures/` + website | ✅ built from the placeholder-size backtest (2026-11-04); final grams wait for the measurement campaign |
 | Data cards | `datacards/` (4 cards) | ✅ drafted |
 
 ---
@@ -60,11 +60,11 @@ This file holds everything researched, decided, built and measured so far, plus 
 | 4 | Energy meter (RAPL / battery / model + Spark metrics) | ✅ tested on Windows. ✅ Linux RAPL reader tested (needs `sudo chmod` after each boot) |
 | 5 | TPC-DS data generation + Spark compatibility | ✅ SF1; **99/99 queries run** on Windows and on Linux |
 | 6 | Carbon data cleaning + EDA | ✅ `carbon/clean.py`, `scripts/eda_carbon.py` (2026-10-27; findings below) |
-| 7 | Job catalogue + measurement campaign | ⏳ `configs/jobs.json` drafted (proposed jobs, window 22:00-07:00) |
-| 8 | Scheduler policies + backtest simulator | ⏳ |
-| 9 | Online scheduler + Airflow DAG | ⏳ |
-| 10 | Savings report | ⏳ Site built: `frontend/` (story + Tonight view, React 19 + Vite 8 + Tailwind 4; data from `scripts/export_site_data.py`). Savings section pending the backtest. Tonight's planner (P0 + greedy P2, TS) mirrors §8; the Python scheduler stays the reference |
-| 11 | Tests | ⏳ |
+| 7 | Job catalogue + measurement campaign | SF5 all-query timing complete; calibrated SF1 fallback after two heap failures. Final campaign blocked by interruptions; all attempts preserved in `results/measurement_attempts/`, with current status in `notes/02_energy_measurement.md` |
+| 8 | Scheduler policies + backtest simulator | P0/P2/P3/P4, causal API fallback, oracle/noisy modes, two-year nightly and paper scenarios implemented; independent audit in `results/verification.json` |
+| 9 | Online scheduler + Airflow DAG | R15 live/offline planning and immediate measured demo implemented. Timed orchestration/Airflow remains optional future work |
+| 10 | Savings report | ✅ 2026-11-04: `scripts/build_report.py` (tables with bootstrap CIs, 6 figures, `results/report_summary.json`), `report/report.md`, `report/demo_script.md`, `scripts/run_all.py` (one command, ~70 s). Website rebuilt on the Exhibit Register design (8 pages); its Tonight planner is a line-for-line TS port of P4 and checks itself against the Python plan (`python_plan.json`). Placeholder sizes until step 7 completes |
+| 11 | Tests | 49 tests pass on Windows and on macOS (arm64, Python 3.12.7, 2026-11-04). The Mac rerun of the backtest is row-for-row identical to the committed Windows one |
 
 ### Linux machine (set up 2026-10-27)
 
@@ -373,7 +373,21 @@ export CARBONSCHED_SPARK_MASTER=yarn           # spark_session() submits to YARN
 
 ---
 
-## 8. Remaining work: detailed plan
+## 8. Implementation status and remaining team work
+
+Person 2 implements TEAM_PLAN R0a–R0e, R1–R8 and R15. See
+`docs/PERSON2.md` for reproduction commands, requirement evidence and limitations.
+Steps 7, 8 and 11 below retain design context; their executable implementations
+now exist. Final numerical acceptance is recorded in the campaign metadata and
+independent backtest verification JSON. The R15 demo plans immediately or runs
+one real job with `--now`; it deliberately never waits for a scheduled start.
+Airflow, P1/P5, regional sensitivity, bootstrap report tables, website exports
+and presentation are outside the required Person 2 scope.
+
+The historical design below is superseded where TEAM_PLAN specifies SF5 with
+an SF1 memory fallback, capacities 1/2, national actual accounting and P0/P2/P3/P4.
+No claim is made that Windows execution verifies a Mac installation.
+
 
 ### Step 6: Carbon data cleaning + EDA → `src/carbonsched/carbon/clean.py`, `scripts/eda_carbon.py` ✅ done 2026-10-27 (findings in §2)
 - Load the CSVs and reindex to a complete 30-min UTC grid. Interpolate gaps ≤ 2 h and flag longer ones. Fill missing national `forecast` from `actual` only for EDA, never for the decision signal.
@@ -382,7 +396,7 @@ export CARBONSCHED_SPARK_MASTER=yarn           # spark_session() submits to YARN
 - Expected story: GB nights are relatively clean; midday solar in summer; big regional spread.
 
 ### Step 7: Job catalogue + measurement campaign → `configs/jobs.json`, `scripts/measure_jobs.py`, `results/measurements.csv`
-Proposed jobs (finalise after SF10 timings):
+Implemented query groups (repeat counts and SF1 fallback recorded in `configs/jobs.json`):
 
 | Job | TPC-DS queries | Character | Deadline / flexibility |
 |---|---|---|---|
@@ -394,7 +408,7 @@ Proposed jobs (finalise after SF10 timings):
 | (opt) `ml_segmentation` | MLlib KMeans/ALS on customer features | syllabus MLlib | flexible, interruptible |
 
 Protocol: see §3.5. Output per run: duration, RAPL J, attributable J, kWh, CPU-s, bytes. Also fit `calibrate()` on all samples to report the model's R² vs RAPL.
-**Scaling to production:** laptop jobs use Wh-scale energy (milligrams of CO2). Report measured laptop numbers, *and* an extrapolation: e.g. energy ∝ executor CPU-seconds, scaled to SF1000 on a cluster with PUE 1.56. The % savings are unchanged by scaling; only the grams change. Be explicit that this is an extrapolation.
+**Scaling to production:** laptop jobs use Wh-scale energy (milligrams of CO2). Report measured laptop numbers, *and* an extrapolation: e.g. energy ∝ executor CPU-seconds, scaled to SF1000 on a cluster with PUE 1.56. A common energy multiplier preserves percentages only if durations and placements stay fixed. Scaling durations can change feasibility and savings. Label every fleet result as an extrapolation.
 
 ### Step 8: Scheduler + backtest simulator → `src/carbonsched/scheduler/{policies,simulator}.py`
 Formulation: each night, jobs are released at r (e.g. 22:00 UK) with hard deadline D (e.g. 07:00). Job j has duration d_j, energy E_j, interruptible flag, optional dependencies, and cluster capacity k. Minimise Σ E_j/d_j · CI(t) over the occupied slots, subject to finishing by D.
@@ -428,7 +442,7 @@ Policy invariants: no deadline is missed; capacity is never exceeded; total ener
 
 - [ ] Can anyone get **Electricity Maps academic access**? If yes, add India South (`IN-SO`) as a second, higher-carbon region (a local angle for Bengaluru).
 - [x] Nightly window convention: **release 22:00, deadline 07:00 UK local time** (decided 2026-10-27). (The code works in UTC; BST shifts it by 1 h.)
-- [ ] Final scale factor: **SF10** if the new machine has ≥ 32 GB RAM, otherwise SF5.
+- [x] Person 2 scale factor: all 99 SF5 queries timed; final SF1 fallback after two sustained SF5 heap failures, with original attempts retained.
 - [ ] Do we want the **live demo** (online scheduler launching real jobs at forecast-optimal times)?
 - [x] Single-node vs multi-node Hadoop on the new system? **Single-node** (pseudo-distributed, checked 2026-10-27), so `EnergyMeter` on the one machine covers YARN runs too (§7.3).
 

@@ -1,0 +1,131 @@
+{
+  "night": "2026-11-04",
+  "release_utc": "2026-11-04T22:00:00+00:00",
+  "deadline_utc": "2026-11-05T07:00:00+00:00",
+  "capacity_k": 1,
+  "forecast": {
+    "source": "live",
+    "fetched_at_utc": "2026-11-04T08:37:02.762117+00:00"
+  },
+  "sizing": {
+    "source": "placeholder",
+    "scale": null,
+    "pue": 1,
+    "energy_basis": "synthetic placeholder, not measured"
+  },
+  "ci_at_22_local": 122.0,
+  "forecast_complete": true,
+  "jobs": [
+    {
+      "job": "daily_sales_report",
+      "start_utc": "2026-11-05T04:30:00+00:00",
+      "end_utc": "2026-11-05T05:00:00+00:00",
+      "occupied_slots": [
+        13
+      ],
+      "baseline_slots": [
+        0
+      ],
+      "baseline_start_utc": "2026-11-04T22:00:00+00:00",
+      "baseline_end_utc": "2026-11-04T22:30:00+00:00",
+      "forecast_ci": 80.0,
+      "baseline_ci": 122.0,
+      "expected_saving_pct": 34.42622950819672,
+      "energy_kwh": 0.001,
+      "reason": "Lowest tested feasible window with an EDF completion check; retained cron if total forecast emissions would increase.",
+      "deadline_met": true
+    },
+    {
+      "job": "customer_analytics",
+      "start_utc": "2026-11-05T03:30:00+00:00",
+      "end_utc": "2026-11-05T04:30:00+00:00",
+      "occupied_slots": [
+        11,
+        12
+      ],
+      "baseline_slots": [
+        1,
+        2
+      ],
+      "baseline_start_utc": "2026-11-04T22:30:00+00:00",
+      "baseline_end_utc": "2026-11-04T23:30:00+00:00",
+      "forecast_ci": 83.0,
+      "baseline_ci": 103.5,
+      "expected_saving_pct": 19.806763285024154,
+      "energy_kwh": 0.001,
+      "reason": "Lowest tested feasible window with an EDF completion check; retained cron if total forecast emissions would increase.",
+      "deadline_met": true
+    },
+    {
+      "job": "inventory_supply_chain",
+      "start_utc": "2026-11-05T05:00:00+00:00",
+      "end_utc": "2026-11-05T06:00:00+00:00",
+      "occupied_slots": [
+        14,
+        15
+      ],
+      "baseline_slots": [
+        3,
+        4
+      ],
+      "baseline_start_utc": "2026-11-04T23:30:00+00:00",
+      "baseline_end_utc": "2026-11-05T00:30:00+00:00",
+      "forecast_ci": 84.0,
+      "baseline_ci": 91.5,
+      "expected_saving_pct": 8.19672131147541,
+      "energy_kwh": 0.001,
+      "reason": "Lowest tested feasible window with an EDF completion check; retained cron if total forecast emissions would increase.",
+      "deadline_met": true
+    },
+    {
+      "job": "cross_channel_promo",
+      "start_utc": "2026-11-05T01:30:00+00:00",
+      "end_utc": "2026-11-05T03:30:00+00:00",
+      "occupied_slots": [
+        7,
+        8,
+        9,
+        10
+      ],
+      "baseline_slots": [
+        5,
+        6,
+        7,
+        8
+      ],
+      "baseline_start_utc": "2026-11-05T00:30:00+00:00",
+      "baseline_end_utc": "2026-11-05T02:30:00+00:00",
+      "forecast_ci": 91.5,
+      "baseline_ci": 96.0,
+      "expected_saving_pct": 4.6875,
+      "energy_kwh": 0.001,
+      "reason": "Lowest tested feasible window with an EDF completion check; retained cron if total forecast emissions would increase.",
+      "deadline_met": true
+    },
+    {
+      "job": "returns_audit",
+      "start_utc": "2026-11-04T23:30:00+00:00",
+      "end_utc": "2026-11-05T00:30:00+00:00",
+      "occupied_slots": [
+        3,
+        4
+      ],
+      "baseline_slots": [
+        9,
+        10
+      ],
+      "baseline_start_utc": "2026-11-05T02:30:00+00:00",
+      "baseline_end_utc": "2026-11-05T03:30:00+00:00",
+      "forecast_ci": 91.5,
+      "baseline_ci": 89.5,
+      "expected_saving_pct": -2.2346368715083798,
+      "energy_kwh": 0.001,
+      "reason": "Lowest tested feasible window with an EDF completion check; retained cron if total forecast emissions would increase.",
+      "deadline_met": true
+    }
+  ],
+  "execution": "planning only; no dispatch or waiting",
+  "comparison": "forecast-based expectation, not measured avoided emissions",
+  "historical_replay": false,
+  "created_at_utc": "2026-11-04T08:37:02.777997+00:00"
+}

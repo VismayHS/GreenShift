@@ -1,0 +1,132 @@
+{
+  "night": "2026-11-04",
+  "release_utc": "2026-11-04T22:00:00+00:00",
+  "deadline_utc": "2026-11-05T07:00:00+00:00",
+  "capacity_k": 1,
+  "forecast": {
+    "source": "stored_fallback",
+    "fetched_at_utc": "2026-11-04T13:00Z",
+    "fallback_reason": "offline requested"
+  },
+  "sizing": {
+    "source": "placeholder",
+    "scale": null,
+    "pue": 1,
+    "energy_basis": "synthetic placeholder, not measured"
+  },
+  "ci_at_22_local": 127.0,
+  "forecast_complete": true,
+  "jobs": [
+    {
+      "job": "daily_sales_report",
+      "start_utc": "2026-11-05T03:30:00+00:00",
+      "end_utc": "2026-11-05T04:00:00+00:00",
+      "occupied_slots": [
+        11
+      ],
+      "baseline_slots": [
+        0
+      ],
+      "baseline_start_utc": "2026-11-04T22:00:00+00:00",
+      "baseline_end_utc": "2026-11-04T22:30:00+00:00",
+      "forecast_ci": 82.0,
+      "baseline_ci": 127.0,
+      "expected_saving_pct": 35.43307086614173,
+      "energy_kwh": 0.001,
+      "reason": "Lowest tested feasible window with an EDF completion check; retained cron if total forecast emissions would increase.",
+      "deadline_met": true
+    },
+    {
+      "job": "customer_analytics",
+      "start_utc": "2026-11-05T04:00:00+00:00",
+      "end_utc": "2026-11-05T05:00:00+00:00",
+      "occupied_slots": [
+        12,
+        13
+      ],
+      "baseline_slots": [
+        1,
+        2
+      ],
+      "baseline_start_utc": "2026-11-04T22:30:00+00:00",
+      "baseline_end_utc": "2026-11-04T23:30:00+00:00",
+      "forecast_ci": 82.0,
+      "baseline_ci": 106.5,
+      "expected_saving_pct": 23.004694835680752,
+      "energy_kwh": 0.001,
+      "reason": "Lowest tested feasible window with an EDF completion check; retained cron if total forecast emissions would increase.",
+      "deadline_met": true
+    },
+    {
+      "job": "inventory_supply_chain",
+      "start_utc": "2026-11-05T02:30:00+00:00",
+      "end_utc": "2026-11-05T03:30:00+00:00",
+      "occupied_slots": [
+        9,
+        10
+      ],
+      "baseline_slots": [
+        3,
+        4
+      ],
+      "baseline_start_utc": "2026-11-04T23:30:00+00:00",
+      "baseline_end_utc": "2026-11-05T00:30:00+00:00",
+      "forecast_ci": 85.5,
+      "baseline_ci": 103.0,
+      "expected_saving_pct": 16.990291262135923,
+      "energy_kwh": 0.001,
+      "reason": "Lowest tested feasible window with an EDF completion check; retained cron if total forecast emissions would increase.",
+      "deadline_met": true
+    },
+    {
+      "job": "cross_channel_promo",
+      "start_utc": "2026-11-05T00:30:00+00:00",
+      "end_utc": "2026-11-05T02:30:00+00:00",
+      "occupied_slots": [
+        5,
+        6,
+        7,
+        8
+      ],
+      "baseline_slots": [
+        5,
+        6,
+        7,
+        8
+      ],
+      "baseline_start_utc": "2026-11-05T00:30:00+00:00",
+      "baseline_end_utc": "2026-11-05T02:30:00+00:00",
+      "forecast_ci": 97.25,
+      "baseline_ci": 97.25,
+      "expected_saving_pct": 0.0,
+      "energy_kwh": 0.001,
+      "reason": "Lowest tested feasible window with an EDF completion check; retained cron if total forecast emissions would increase.",
+      "deadline_met": true
+    },
+    {
+      "job": "returns_audit",
+      "start_utc": "2026-11-05T05:00:00+00:00",
+      "end_utc": "2026-11-05T06:00:00+00:00",
+      "occupied_slots": [
+        14,
+        15
+      ],
+      "baseline_slots": [
+        9,
+        10
+      ],
+      "baseline_start_utc": "2026-11-05T02:30:00+00:00",
+      "baseline_end_utc": "2026-11-05T03:30:00+00:00",
+      "forecast_ci": 90.5,
+      "baseline_ci": 85.5,
+      "expected_saving_pct": -5.847953216374268,
+      "energy_kwh": 0.001,
+      "reason": "Lowest tested feasible window with an EDF completion check; retained cron if total forecast emissions would increase.",
+      "deadline_met": true
+    }
+  ],
+  "execution": "planning only; no dispatch or waiting",
+  "comparison": "forecast-based expectation, not measured avoided emissions",
+  "historical_replay": true,
+  "created_at_utc": "2026-11-04T13:00:48.807761+00:00"
+}

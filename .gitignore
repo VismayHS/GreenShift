@@ -2,6 +2,8 @@
 .tools/
 __pycache__/
 *.pyc
+.pytest_cache/
+artifacts/
 # Data: regenerable. GB API CSVs (CC BY 4.0, ~4 MB each) are committed for convenience.
 data/raw/*
 !data/raw/carbon/

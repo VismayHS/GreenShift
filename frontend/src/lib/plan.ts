@@ -1,6 +1,8 @@
-// Tonight's plan: P0 baseline vs P2 best window (non-interrupting), capacity 1,
-// on the 30-min grid. Mirrors the HANDOFF §8 design; the Python scheduler
-// (step 8) will be the reference implementation for the backtest.
+// Tonight's plan in the browser: a line-for-line port of the Python reference
+// (src/carbonsched/scheduler/policies.py: baseline + schedule("P4"), and
+// scheduler/demo.py: choose_window). The Tonight page checks its own output
+// against python_plan.json, written by scripts/run_scheduler.py, whenever both
+// use the same stored forecast.
 
 import type { Slot } from './data'
 
@@ -9,24 +11,13 @@ const TZ = 'Europe/London'
 
 const fmt = new Intl.DateTimeFormat('en-GB', { timeZone: TZ, hour: '2-digit', minute: '2-digit', hourCycle: 'h23' })
 const fmtDay = new Intl.DateTimeFormat('en-GB', { timeZone: TZ, weekday: 'short', day: 'numeric', month: 'short' })
+const fmtDate = new Intl.DateTimeFormat('en-CA', { timeZone: TZ, year: 'numeric', month: '2-digit', day: '2-digit' })
+const fmtHour = new Intl.DateTimeFormat('en-GB', { timeZone: TZ, hour: 'numeric', hourCycle: 'h23' })
 export const clock = (t: number) => fmt.format(t)
 export const day = (t: number) => fmtDay.format(t)
+export const hm = (min: number) => (Math.abs(min) >= 60 ? `${Math.floor(Math.abs(min) / 60)} h${Math.abs(min) % 60 ? ` ${Math.abs(min) % 60} min` : ''}` : `${Math.abs(min)} min`)
 
-/** UTC ms of a UK-local wall-clock time on the UK-local date of `ref` plus `addDays`. */
-export function ukTime(ref: number, hhmm: string, addDays = 0): number {
-  const [h, m] = hhmm.split(':').map(Number)
-  const parts = new Intl.DateTimeFormat('en-CA', { timeZone: TZ, year: 'numeric', month: '2-digit', day: '2-digit' }).format(ref)
-  const [y, mo, d] = parts.split('-').map(Number)
-  // Guess as UTC, then correct by the zone offset at that instant (GMT or BST).
-  const want = Date.UTC(y, mo - 1, d + addDays, h, m)
-  let t = want
-  for (let i = 0; i < 2; i++) t = want - offset(t)
-  return t
-}
-
-const partsFmt = new Intl.DateTimeFormat('en-GB', {
-  timeZone: TZ, hourCycle: 'h23', year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric',
-})
+const partsFmt = new Intl.DateTimeFormat('en-GB', { timeZone: TZ, hourCycle: 'h23', year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric' })
 /** UK offset from UTC at instant t, in ms (0 in GMT, 3.6e6 in BST). */
 function offset(t: number): number {
   const p = Object.fromEntries(partsFmt.formatToParts(t).map((x) => [x.type, x.value]))
@@ -34,123 +25,142 @@ function offset(t: number): number {
   return wall - Math.floor(t / 60000) * 60000
 }
 
-/**
- * The window the scheduler plans: the current night from now if at least
- * `minSlots` half-hours remain before the deadline, otherwise the next night.
- */
-export function tonight(now: number, minSlots = 1, release = '22:00', deadline = '07:00') {
-  const rToday = ukTime(now, release)
-  const dToday = ukTime(now, deadline)
-  const next = { release: rToday, deadline: ukTime(now, deadline, 1), running: false }
-  const fits = (w: { release: number; deadline: number }) => (w.deadline - w.release) / SLOT_MS >= minSlots
-  if (now < dToday) {
-    const cur = { release: Math.max(ukTime(now, release, -1), nextSlot(now)), deadline: dToday, running: true }
-    return fits(cur) ? cur : next
-  }
-  if (now < rToday) return next
-  const cur = { release: Math.max(rToday, nextSlot(now)), deadline: ukTime(now, deadline, 1), running: true }
-  return fits(cur) ? cur : { release: ukTime(now, release, 1), deadline: ukTime(now, deadline, 2), running: false }
+/** UTC ms of UK-local wall time hh:00 on calendar date y-m-d (+addDays). */
+function ukWall(y: number, m: number, d: number, hour: number): number {
+  const want = Date.UTC(y, m - 1, d, hour, 0)
+  let t = want
+  for (let i = 0; i < 2; i++) t = want - offset(t)
+  return t
 }
 
-/** Start of the next half-hour slot at or after t. */
-const nextSlot = (t: number) => Math.ceil(t / SLOT_MS) * SLOT_MS
-
-export type PlanJob = { name: string; slots: number }
-export type Placed = { name: string; start: number; end: number; meanCi: number | null }
-export type Plan = { jobs: Placed[]; feasible: boolean }
-
-function meanCi(ci: (number | null)[], i: number, n: number): number | null {
-  let s = 0
-  for (let k = i; k < i + n; k++) {
-    const v = ci[k]
-    if (v == null) return null
-    s += v
-  }
-  return s / n
+/** models.night_window: 22:00 UK on `night` to 07:00 UK the next day, as UTC ms. */
+export function nightWindow(y: number, m: number, d: number): [number, number] {
+  return [ukWall(y, m, d, 22), ukWall(y, m, d + 1, 7)]
 }
 
-/** Slots of the window, with the forecast for each (null when the forecast is missing). */
-export function windowSlots(forecast: Slot[], release: number, deadline: number): (number | null)[] {
-  const byT = new Map(forecast.map((s) => [s.t, s.ci]))
-  const out: (number | null)[] = []
-  for (let t = release; t < deadline; t += SLOT_MS) out.push(byT.get(t) ?? null)
+export type PlanJob = { name: string; slots: number; energy: number }
+type Block = number[]
+export type Placed = { name: string; slots: Block; start: number; end: number }
+
+function* blocks(d: number, used: Int32Array, k: number): Generator<Block> {
+  for (let i = 0; i + d <= used.length; i++) {
+    let ok = true
+    for (let s = i; s < i + d; s++) if (used[s] >= k) { ok = false; break }
+    if (ok) yield Array.from({ length: d }, (_, j) => i + j)
+  }
+}
+const first = (it: Generator<Block>) => { const r = it.next(); return r.done ? null : r.value }
+const occupy = (used: Int32Array, b: Block) => { for (const s of b) used[s] += 1 }
+
+/** policies.baseline: catalogue order, earliest block with spare capacity. */
+export function baseline(jobs: PlanJob[], n: number, k: number): Map<string, Block> | null {
+  const used = new Int32Array(n)
+  const out = new Map<string, Block>()
+  for (const j of jobs) {
+    const b = first(blocks(j.slots, used, k))
+    if (!b) return null
+    out.set(j.name, b)
+    occupy(used, b)
+  }
   return out
 }
 
-/** P0: cron at release, back to back in catalogue order. */
-export function baseline(jobs: PlanJob[], ci: (number | null)[], release: number): Plan {
-  let i = 0
-  const placed = jobs.map((j) => {
-    const p = { name: j.name, start: release + i * SLOT_MS, end: release + (i + j.slots) * SLOT_MS, meanCi: meanCi(ci, i, j.slots) }
-    i += j.slots
-    return p
+/** policies._edf without splitting (P4 never splits). */
+function edf(jobs: PlanJob[], used0: Int32Array, k: number): Map<string, Block> | null {
+  const used = used0.slice()
+  const out = new Map<string, Block>()
+  const order = [...jobs].sort((a, b) => b.slots - a.slots || (a.name < b.name ? -1 : a.name > b.name ? 1 : 0))
+  for (const j of order) {
+    const b = first(blocks(j.slots, used, k))
+    if (!b) return null
+    out.set(j.name, b)
+    occupy(used, b)
+  }
+  return out
+}
+
+const mean = (ci: number[], b: Block) => b.reduce((s, i) => s + ci[i], 0) / b.length
+
+/** policies.schedule("P4"): largest energy first, best contiguous window with an EDF witness. */
+export function p4(jobs: PlanJob[], ci: (number | null)[], k: number): Map<string, Block> | null {
+  const base = baseline(jobs, ci.length, k)
+  if (!base) return null
+  if (ci.some((v) => v == null || !Number.isFinite(v))) return base
+  const c = ci as number[]
+  const order = jobs.map((j, i) => ({ j, i })).sort((a, b) => b.j.energy - a.j.energy || a.i - b.i).map((x) => x.j)
+  const used = new Int32Array(c.length)
+  const chosen = new Map<string, Block>()
+  let witness = new Map(base)
+  order.forEach((job, pos) => {
+    const remaining = order.slice(pos + 1)
+    const cands = [...blocks(job.slots, used, k)].map((b) => ({ b, m: mean(c, b) }))
+    cands.sort((x, y) => x.m - y.m || x.b[0] - y.b[0])
+    let accepted: Block | null = null
+    for (const { b } of cands) {
+      const trial = used.slice()
+      occupy(trial, b)
+      const completion = edf(remaining, trial, k)
+      if (completion) { accepted = b; witness = completion; break }
+    }
+    if (!accepted) { accepted = witness.get(job.name)!; witness.delete(job.name) }
+    chosen.set(job.name, accepted)
+    occupy(used, accepted)
   })
-  return { jobs: placed, feasible: i <= ci.length }
+  const cost = (p: Map<string, Block>) => jobs.reduce((s, j) => s + j.energy * mean(c, p.get(j.name)!), 0)
+  return cost(chosen) > cost(base) + 1e-12 ? base : chosen
 }
 
-/** Can these jobs still be packed into the free slots (first fit, longest first)? */
-function fits(jobs: PlanJob[], free: boolean[]): boolean {
-  const f = free.slice()
-  for (const j of [...jobs].sort((a, b) => b.slots - a.slots)) {
-    let ok = false
-    for (let i = 0; i + j.slots <= f.length && !ok; i++) {
-      if (f.slice(i, i + j.slots).every(Boolean)) {
-        f.fill(false, i, i + j.slots)
-        ok = true
-      }
-    }
-    if (!ok) return false
+/** demo.choose_window: this night's remaining window if the jobs fit, else the next one. */
+export function chooseWindow(now: number, jobs: PlanJob[], k: number) {
+  const [y, m, d] = fmtDate.format(now).split('-').map(Number)
+  const back = Number(fmtHour.format(now)) < 7 ? -1 : 0
+  for (let off = 0; off < 3; off++) {
+    const [release, deadline] = nightWindow(y, m, d + back + off)
+    const start = Math.max(release, Math.ceil(now / SLOT_MS) * SLOT_MS)
+    if (start >= deadline) continue
+    const n = Math.round((deadline - start) / SLOT_MS)
+    if (jobs.some((j) => j.slots > n)) continue
+    if (!baseline(jobs, n, k)) continue
+    return { cronRelease: release, start, deadline, n, night: fmtDate.format(release) }
   }
-  return true
+  return null
 }
 
-/**
- * P2 greedy: longest job first, each into the contiguous window with the lowest
- * mean forecast that keeps every remaining job feasible. Never misses the
- * deadline: if no clean placement keeps the rest feasible, it falls back to P0.
- */
-export function bestWindow(jobs: PlanJob[], ci: (number | null)[], release: number): Plan {
-  const free = ci.map(() => true)
-  const order = jobs.map((j, k) => ({ ...j, k })).sort((a, b) => b.slots - a.slots || a.k - b.k)
-  const placed: (Placed & { k: number })[] = []
-  for (let n = 0; n < order.length; n++) {
-    const j = order[n]
-    const rest = order.slice(n + 1)
-    let best: { i: number; m: number } | null = null
-    for (let i = 0; i + j.slots <= ci.length; i++) {
-      if (!free.slice(i, i + j.slots).every(Boolean)) continue
-      const m = meanCi(ci, i, j.slots)
-      if (m == null) continue
-      const trial = free.slice()
-      trial.fill(false, i, i + j.slots)
-      if (!fits(rest, trial)) continue
-      if (!best || m < best.m - 1e-9) best = { i, m }
+export function windowSlots(forecast: Slot[], start: number, n: number): (number | null)[] {
+  const byT = new Map(forecast.map((s) => [s.t, s.ci]))
+  return Array.from({ length: n }, (_, i) => byT.get(start + i * SLOT_MS) ?? null)
+}
+
+export type JobRow = { name: string; base: Placed; best: Placed; baseCi: number | null; bestCi: number | null; savingPct: number | null }
+
+/** Both plans for tonight, in catalogue order, with forecast means as in demo.plan_demo. */
+export function planTonight(now: number, forecast: Slot[], jobs: PlanJob[], k: number) {
+  const win = chooseWindow(now, jobs, k)
+  if (!win) return null
+  const ci = windowSlots(forecast, win.start, win.n)
+  const base = baseline(jobs, win.n, k)!
+  const best = p4(jobs, ci, k)!
+  const at = (b: Block) => ({ start: win.start + b[0] * SLOT_MS, end: win.start + (b[b.length - 1] + 1) * SLOT_MS })
+  const avg = (b: Block) => (b.every((i) => ci[i] != null) ? b.reduce((s, i) => s + (ci[i] as number), 0) / b.length : null)
+  const rows: JobRow[] = jobs.map((j) => {
+    const b = base.get(j.name)!, p = best.get(j.name)!
+    const baseCi = avg(b), bestCi = avg(p)
+    return {
+      name: j.name, base: { name: j.name, slots: b, ...at(b) }, best: { name: j.name, slots: p, ...at(p) },
+      baseCi, bestCi, savingPct: baseCi && bestCi != null ? ((baseCi - bestCi) / baseCi) * 100 : null,
     }
-    if (!best) return baseline(jobs, ci, release)
-    free.fill(false, best.i, best.i + j.slots)
-    placed.push({ name: j.name, k: j.k, start: release + best.i * SLOT_MS, end: release + (best.i + j.slots) * SLOT_MS, meanCi: best.m })
-  }
-  const plan = { jobs: placed.sort((a, b) => a.k - b.k).map(({ k: _k, ...p }) => p), feasible: true }
-  // Greedy can lose to cron on a tightly packed night; never return a worse plan.
-  const base = baseline(jobs, ci, release)
-  const b = total(base.jobs), g = total(plan.jobs)
-  return b != null && g != null && b < g ? base : plan
-}
-
-/** Sum of mean intensity x duration over all jobs (proportional to grams for equal power). */
-export function total(jobs: Placed[]): number | null {
-  if (jobs.some((j) => j.meanCi == null)) return null
-  return jobs.reduce((s, j) => s + j.meanCi! * (j.end - j.start), 0)
+  })
+  const complete = ci.every((v) => v != null)
+  const total = (key: 'baseCi' | 'bestCi') => (complete ? rows.reduce((s, r, i) => s + jobs[i].energy * (r[key] as number), 0) : null)
+  return { win, ci, rows, complete, baseTotal: total('baseCi'), bestTotal: total('bestCi') }
 }
 
 /** Plain-language reason for one job's move (the auditable decision log). */
-export function reason(b: Placed, p: Placed): string {
-  if (b.meanCi == null || p.meanCi == null) return 'Forecast missing for part of the night; kept at the cron time.'
-  const delayMin = Math.round((p.start - b.start) / 60000)
-  const pct = Math.round((100 * (b.meanCi - p.meanCi)) / b.meanCi)
-  if (delayMin === 0) return 'Already in the cleanest slot it can have; runs at the cron time.'
-  const when = `${delayMin > 0 ? 'Moved' : 'Moved earlier'} ${hm(Math.abs(delayMin))}${delayMin > 0 ? ' later' : ''}`
-  return `${when}: forecast ${Math.round(p.meanCi)} g/kWh instead of ${Math.round(b.meanCi)} (${pct >= 0 ? '−' : '+'}${Math.abs(pct)}%).`
+export function reason(r: JobRow): string {
+  if (r.baseCi == null || r.bestCi == null) return 'Forecast missing for part of the night, so the job keeps its cron slot.'
+  const moved = Math.round((r.best.start - r.base.start) / 60000)
+  if (moved === 0) return 'Its cron slot is already the best feasible window.'
+  const dir = moved > 0 ? 'later' : 'earlier'
+  if (r.bestCi > r.baseCi) return `Moved ${hm(moved)} ${dir} to free a cleaner window for another job; the batch total still falls.`
+  return `Moved ${hm(moved)} ${dir}: forecast ${r.bestCi.toFixed(1)} instead of ${r.baseCi.toFixed(1)} gCO₂/kWh.`
 }
-
-export const hm = (min: number) => (min >= 60 ? `${Math.floor(min / 60)} h${min % 60 ? ` ${min % 60} min` : ''}` : `${min} min`)

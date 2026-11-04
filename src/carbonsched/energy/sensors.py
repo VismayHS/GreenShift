@@ -65,6 +65,11 @@ class BatteryWindows:
             }
         return {"on_ac": None, "discharge_w": None, "remaining_wh": None}
 
+    def close(self) -> None:
+        import pythoncom
+        self._wmi = None
+        pythoncom.CoUninitialize()
+
 
 class RaplLinux:
     """RAPL through the Linux powercap interface (/sys/class/powercap/intel-rapl:*).
@@ -113,11 +118,16 @@ class RaplLinux:
 
 
 def try_rapl() -> RaplWindows | RaplLinux | None:
+    r = None
     try:
         r = RaplWindows() if sys.platform == "win32" else RaplLinux() if sys.platform.startswith("linux") else None
-        return r if r is not None and r.read_joules()["PKG"] > 0 else None
+        if r is not None and r.read_joules()["PKG"] > 0:
+            return r
     except Exception:
-        return None
+        pass
+    if r is not None:
+        r.close()
+    return None
 
 
 def try_battery() -> BatteryWindows | None:

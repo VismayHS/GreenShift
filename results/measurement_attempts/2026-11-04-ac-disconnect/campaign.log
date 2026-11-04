@@ -1,0 +1,28 @@
+WARNING: Using incubator modules: jdk.incubator.vector
+26/11/04 13:44:10 WARN Shell: Did not find winutils.exe: java.io.FileNotFoundException: java.io.FileNotFoundException: HADOOP_HOME and hadoop.home.dir are unset. -see https://cwiki.apache.org/confluence/display/HADOOP2/WindowsProblems
+Using Spark's default log4j profile: org/apache/spark/log4j2-defaults.properties
+Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
+26/11/04 13:44:11 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+26/11/04 13:44:23 WARN SparkStringUtils: Truncated the string representation of a plan since it was too large. This behavior can be adjusted by setting 'spark.sql.debug.maxToStringFields'.
+idle_start: 60 seconds
+Warmup daily_sales_report
+Warmup customer_analytics
+Warmup inventory_supply_chain
+Warmup cross_channel_promo
+Warmup returns_audit
+Traceback (most recent call last):
+  File "C:\Users\sharv\Documents\Codex\2026-10-31\https-github-com-vismayhs-greenshift-https-2\work\GreenShift\scripts\measure_jobs.py", line 141, in <module>
+    main(guard)
+  File "C:\Users\sharv\Documents\Codex\2026-10-31\https-github-com-vismayhs-greenshift-https-2\work\GreenShift\scripts\measure_jobs.py", line 81, in main
+    guard.check()
+  File "C:\Users\sharv\Documents\Codex\2026-10-31\https-github-com-vismayhs-greenshift-https-2\work\GreenShift\src\carbonsched\energy\preflight.py", line 52, in check
+    raise self._error
+  File "C:\Users\sharv\Documents\Codex\2026-10-31\https-github-com-vismayhs-greenshift-https-2\work\GreenShift\src\carbonsched\energy\preflight.py", line 44, in _watch
+    validate_session_sample(battery.power_plugged if battery else None, now - previous)
+  File "C:\Users\sharv\Documents\Codex\2026-10-31\https-github-com-vismayhs-greenshift-https-2\work\GreenShift\src\carbonsched\energy\preflight.py", line 23, in validate_session_sample
+    raise RuntimeError("AC disconnected during campaign; restart the complete session")
+RuntimeError: AC disconnected during campaign; restart the complete session
+SUCCESS: The process with PID 14884 (child process of PID 9392) has been terminated.
+SUCCESS: The process with PID 9392 (child process of PID 23844) has been terminated.
+SUCCESS: The process with PID 23844 (child process of PID 14604) has been terminated.

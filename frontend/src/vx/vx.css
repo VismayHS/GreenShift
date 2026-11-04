@@ -1,0 +1,175 @@
+/* vx.css: Exhibit Register tokens and the few classes Tailwind cannot express. */
+:root {
+  --vx-paper: #f4f5f2;
+  --vx-sheet: #ffffff;
+  --vx-rail: #e8eae5;
+  --vx-hover: #eceee9;
+  --vx-rule: #d8dbd3;
+  --vx-rule-strong: #b8bcb2;
+
+  --vx-ink: #1c2433;
+  --vx-ink-2: #414b5e;
+  --vx-ink-3: #5c6474;
+
+  --vx-stamp: #5b3fa8;
+  --vx-stamp-deep: #472f8a;
+  --vx-stamp-wash: #efebf8;
+
+  --vx-seal: #8e1b1b;
+  --vx-strong: #1f6b45;
+  --vx-strong-wash: #e8f2ec;
+  --vx-possible: #8a5a00;
+  --vx-possible-wash: #f7f0df;
+  --vx-fail: #b42318;
+  --vx-fail-wash: #fbeceb;
+
+  /* Chart inks: ink, violet and greys only (the Verdict Rule keeps green/amber/red for state). */
+  --vx-chart-1: #5b3fa8;
+  --vx-chart-2: #1c2433;
+  --vx-chart-3: #8f7bc8;
+  --vx-chart-4: #8a909c;
+
+  --vx-font: 'Noto Sans Variable', 'Noto Sans', system-ui, sans-serif;
+  --vx-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', monospace;
+
+  --vx-shadow-lift: 0 1px 2px rgba(28, 36, 51, 0.06), 0 6px 20px -8px rgba(28, 36, 51, 0.18);
+}
+
+html:has(.vx),
+html:has(.vx) body {
+  background: var(--vx-paper);
+  color-scheme: light;
+}
+
+.vx {
+  position: relative;
+  min-height: 100vh;
+  background: var(--vx-paper);
+  color: var(--vx-ink);
+  font-family: var(--vx-font);
+  font-size: 16px;
+  line-height: 1.55;
+  font-variant-numeric: tabular-nums;
+  color-scheme: light;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+.vx ::selection { background: var(--vx-stamp-wash); color: var(--vx-stamp-deep); }
+.vx :focus-visible { outline: 2px solid var(--vx-stamp); outline-offset: 2px; border-radius: 2px; }
+.vx a { text-underline-offset: 3px; text-decoration-thickness: 1px; }
+.vx ::-webkit-scrollbar { width: 10px; height: 10px; }
+.vx ::-webkit-scrollbar-track { background: transparent; }
+.vx ::-webkit-scrollbar-thumb { background: var(--vx-rule-strong); border: 3px solid var(--vx-paper); border-radius: 8px; }
+.vx ::-webkit-scrollbar-thumb:hover { background: var(--vx-ink-3); }
+.vx input::placeholder, .vx textarea::placeholder { color: var(--vx-ink-3); opacity: 0.7; }
+.vx svg text { font-family: var(--vx-font); }
+
+/* stamps: the pattern carries the meaning, colour reinforces it */
+.vx-stamp {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--vx-font);
+  font-weight: 700;
+  font-stretch: 72%;
+  font-size: 13px;
+  line-height: 1;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  padding: 4px 7px;
+  border: 1.5px solid currentColor;
+  border-radius: 4px;
+  background: transparent;
+}
+.vx-stamp svg { width: 13px; height: 13px; stroke-width: 2.25; }
+.vx-stamp[data-tone='lead']     { color: var(--vx-ink-2); border-style: dashed; }
+.vx-stamp[data-tone='sealed']   { color: #fff; background: var(--vx-seal); border-color: var(--vx-seal); }
+.vx-stamp[data-tone='strong']   { color: var(--vx-strong); border-style: double; border-width: 3px; padding: 2px 5px; }
+.vx-stamp[data-tone='possible'] { color: var(--vx-possible); }
+.vx-stamp[data-tone='rejected'] { color: var(--vx-ink-3); text-decoration: line-through; }
+.vx-stamp[data-tone='done']     { color: var(--vx-strong); }
+.vx-stamp[data-tone='failed']   { color: var(--vx-fail); border-width: 2px; }
+.vx-stamp[data-tone='running']  { color: var(--vx-stamp); position: relative; overflow: hidden; }
+.vx-stamp[data-tone='queued']   { color: var(--vx-stamp); border-style: dotted; }
+.vx-stamp[data-tone='skipped']  { color: var(--vx-ink-3); border-style: dotted; }
+.vx-stamp[data-tone='info']     { color: var(--vx-ink-2); }
+.vx-stamp[data-tone='private']  { color: var(--vx-ink); border-style: solid; }
+
+.vx-stamp[data-tone='running']::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(91, 63, 168, 0.18), transparent);
+  transform: translateX(-100%);
+  animation: vx-ink 1.4s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+}
+@keyframes vx-ink { to { transform: translateX(100%); } }
+
+.vx-press { animation: vx-press 160ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+@keyframes vx-press {
+  from { transform: scale(1.1) rotate(-1.5deg); opacity: 0.35; }
+  to { transform: scale(1) rotate(0); opacity: 1; }
+}
+
+/* the one highlighted rail item */
+.vx-breathe::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow: 0 0 10px 1px color-mix(in srgb, var(--vx-stamp) 40%, transparent),
+    inset 0 0 8px color-mix(in srgb, var(--vx-stamp) 22%, transparent);
+  opacity: 0.15;
+  animation: vx-breathe 3.2s ease-in-out infinite;
+}
+@keyframes vx-breathe { 50% { opacity: 1; } }
+
+/* register table */
+.vx .overflow-x-auto, .vx .overflow-auto { position: relative; }
+.vx-register { width: 100%; border-collapse: collapse; }
+.vx-register th {
+  text-align: left;
+  font-family: var(--vx-mono);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--vx-ink-3);
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--vx-rule-strong);
+  white-space: nowrap;
+}
+.vx-register thead th { position: sticky; top: 0; z-index: 1; background: var(--vx-sheet); }
+.vx-register td { padding: 14px 16px; border-bottom: 1px solid var(--vx-rule); vertical-align: top; }
+.vx-register tr:last-child td { border-bottom: 0; }
+.vx-register tbody tr:hover td { background: var(--vx-hover); }
+.vx-register td.num, .vx-register th.num { text-align: right; }
+
+/* tag: boxed fields, the way a paper form is filled in */
+.vx-tag-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  border-top: 1px solid var(--vx-rule);
+  border-left: 1px solid var(--vx-rule);
+}
+.vx-tag-fields > * {
+  border-right: 1px solid var(--vx-rule);
+  border-bottom: 1px solid var(--vx-rule);
+  padding: 10px 12px;
+  min-width: 0;
+}
+
+.vx-skeleton {
+  background: linear-gradient(90deg, var(--vx-rail) 0%, var(--vx-hover) 40%, var(--vx-rail) 80%);
+  background-size: 200% 100%;
+  animation: vx-shimmer 1.6s ease-in-out infinite;
+  border-radius: 3px;
+}
+@keyframes vx-shimmer { to { background-position: -200% 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .vx-stamp[data-tone='running']::after, .vx-press, .vx-skeleton { animation: none; }
+  .vx-breathe::after { animation: none; opacity: 0.5; }
+}

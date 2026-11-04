@@ -1,0 +1,65 @@
+{
+  "recorded_at_utc": "2026-11-04T08:48:07.573468+00:00",
+  "source_commit": "70913a58e63e73a1ba5cd95b35ea91541e6baca1",
+  "tests": {
+    "passed": 49,
+    "warnings": 184,
+    "platform": "Windows",
+    "command": "python -m pytest -q --disable-warnings"
+  },
+  "matrix_validation": {
+    "status": "passed",
+    "rows": 437448,
+    "plans": 157512,
+    "deadline_misses": 0,
+    "capacity_violations": 0,
+    "actual_accounting_rows_checked": 437448,
+    "energy_conserved": true,
+    "oracle_vs_api": [
+      {
+        "scenario": "nightly",
+        "policy": "P0",
+        "api_g": 856.71975,
+        "oracle_g": 856.71975
+      },
+      {
+        "scenario": "nightly",
+        "policy": "P2",
+        "api_g": 792.2620000000001,
+        "oracle_g": 767.1537500000001
+      },
+      {
+        "scenario": "nightly",
+        "policy": "P3",
+        "api_g": 792.54525,
+        "oracle_g": 766.6822500000001
+      },
+      {
+        "scenario": "nightly",
+        "policy": "P4",
+        "api_g": 792.2620000000001,
+        "oracle_g": 767.1537500000001
+      },
+      {
+        "scenario": "wiesner_s1",
+        "policy": "P0",
+        "api_g": 401469.0,
+        "oracle_g": 401469.0
+      },
+      {
+        "scenario": "wiesner_s1",
+        "policy": "P2",
+        "api_g": 391690.0,
+        "oracle_g": 374554.0
+      }
+    ],
+    "backtest_sha256": "b5454c0f944e0a73d0a03b3e505e6f969980d31cb0574e832ffba53740c06664"
+  },
+  "matrix_sizing": "synthetic placeholders; not measured nightly results",
+  "live_dry_run": "passed",
+  "offline_dry_run": "passed, labelled historical replay",
+  "physical_measurement_status": "blocked: AC disconnected during warmup; incomplete attempts archived",
+  "final_measured_backtest": "not available",
+  "measured_live_demo": "pending",
+  "frontend_changed": false
+}

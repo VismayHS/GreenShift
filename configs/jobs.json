@@ -1,11 +1,96 @@
 {
-  "status": "proposed (HANDOFF §8 step 7); finalise after SF5 timings",
-  "window": {"release_local": "22:00", "deadline_local": "07:00", "tz": "Europe/London", "decided": "2026-10-27"},
+  "status": "Conservative doubled batches; final campaign quality gate required",
+  "window": {
+    "release_local": "22:00",
+    "deadline_local": "07:00",
+    "tz": "Europe/London",
+    "decided": "2026-10-27"
+  },
   "jobs": [
-    {"name": "daily_sales_report", "queries": [3, 7, 19, 42, 52, 55], "character": "light BI dashboards", "interruptible": false},
-    {"name": "customer_analytics", "queries": [4, 11, 74], "character": "heavy multi-year customer aggregation", "interruptible": false},
-    {"name": "inventory_supply_chain", "queries": [21, 22, 37, 39, 72, 82], "character": "inventory joins", "interruptible": false},
-    {"name": "cross_channel_promo", "queries": [14, 23, 33, 56, 60, 77, 80], "character": "union of three sales channels, very heavy", "interruptible": true},
-    {"name": "returns_audit", "queries": [16, 50, 62, 94, 95, 99], "character": "returns and shipping lag", "interruptible": false}
-  ]
+    {
+      "name": "daily_sales_report",
+      "queries": [
+        3,
+        7,
+        19,
+        42,
+        52,
+        55
+      ],
+      "character": "light BI dashboards",
+      "interruptible": false,
+      "repeats": 36,
+      "timing_pass_seconds": 10.427477200020803,
+      "prior_pilot_seconds": 43.65870666503906,
+      "repeat_adjustment": "Doubled after power-transition attempt exposed faster warmed runtimes; final quality gate still required."
+    },
+    {
+      "name": "customer_analytics",
+      "queries": [
+        4,
+        11,
+        74
+      ],
+      "character": "heavy multi-year customer aggregation",
+      "interruptible": false,
+      "repeats": 12,
+      "timing_pass_seconds": 30.224441599973943,
+      "prior_pilot_seconds": 57.37921357154846,
+      "repeat_adjustment": "Doubled after power-transition attempt exposed faster warmed runtimes; final quality gate still required."
+    },
+    {
+      "name": "inventory_supply_chain",
+      "queries": [
+        21,
+        22,
+        37,
+        39,
+        72,
+        82
+      ],
+      "character": "inventory joins",
+      "interruptible": false,
+      "repeats": 10,
+      "timing_pass_seconds": 40.708148500008974,
+      "prior_pilot_seconds": 72.34713697433472,
+      "repeat_adjustment": "Doubled after power-transition attempt exposed faster warmed runtimes; final quality gate still required."
+    },
+    {
+      "name": "cross_channel_promo",
+      "queries": [
+        14,
+        23,
+        33,
+        56,
+        60,
+        77,
+        80
+      ],
+      "character": "union of three sales channels, very heavy",
+      "interruptible": true,
+      "repeats": 10,
+      "timing_pass_seconds": 52.99357549994602,
+      "prior_pilot_seconds": 111.80132675170898,
+      "repeat_adjustment": "Doubled after power-transition attempt exposed faster warmed runtimes; final quality gate still required."
+    },
+    {
+      "name": "returns_audit",
+      "queries": [
+        16,
+        50,
+        62,
+        94,
+        95,
+        99
+      ],
+      "character": "returns and shipping lag",
+      "interruptible": false,
+      "repeats": 18,
+      "timing_pass_seconds": 22.226968899951316,
+      "prior_pilot_seconds": 63.74746775627136,
+      "repeat_adjustment": "Doubled after power-transition attempt exposed faster warmed runtimes; final quality gate still required."
+    }
+  ],
+  "scale_factor": 1,
+  "scale_factor_reason": "SF5 query timing succeeded, but two sustained SF5 campaigns reported Java heap exhaustion; SF1 fallback permitted by TEAM_PLAN R0c."
 }

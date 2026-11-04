@@ -1,0 +1,59 @@
+WARNING: Using incubator modules: jdk.incubator.vector
+26/11/02 12:39:07 WARN Shell: Did not find winutils.exe: java.io.FileNotFoundException: java.io.FileNotFoundException: HADOOP_HOME and hadoop.home.dir are unset. -see https://cwiki.apache.org/confluence/display/HADOOP2/WindowsProblems
+Using Spark's default log4j profile: org/apache/spark/log4j2-defaults.properties
+Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
+26/11/02 12:39:08 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+26/11/02 12:39:14 WARN SparkStringUtils: Truncated the string representation of a plan since it was too large. This behavior can be adjusted by setting 'spark.sql.debug.maxToStringFields'.
+idle_start: 60 seconds
+Warmup daily_sales_report
+Warmup customer_analytics
+Warmup inventory_supply_chain
+Warmup cross_channel_promo
+Warmup returns_audit
+[404.431s][warning][gc,alloc] Executor task launch worker for task 1.0 in stage 1082.0 (TID 1638): Retried waiting for GCLocker too often allocating 33554434 words
+26/11/02 12:45:44 WARN TaskMemoryManager: Failed to allocate a page (268435456 bytes) for 0 times, try again.
+java.lang.OutOfMemoryError: Java heap space
+	at org.apache.spark.unsafe.memory.HeapMemoryAllocator.allocate(HeapMemoryAllocator.java:72)
+	at org.apache.spark.memory.TaskMemoryManager.allocatePage(TaskMemoryManager.java:398)
+	at org.apache.spark.memory.TaskMemoryManager.allocatePage(TaskMemoryManager.java:359)
+	at org.apache.spark.memory.MemoryConsumer.allocateArray(MemoryConsumer.java:97)
+	at org.apache.spark.util.collection.unsafe.sort.UnsafeExternalSorter.growPointerArrayIfNecessary(UnsafeExternalSorter.java:419)
+	at org.apache.spark.util.collection.unsafe.sort.UnsafeExternalSorter.allocateMemoryForRecordIfNecessary(UnsafeExternalSorter.java:476)
+	at org.apache.spark.util.collection.unsafe.sort.UnsafeExternalSorter.insertRecord(UnsafeExternalSorter.java:527)
+	at org.apache.spark.sql.execution.UnsafeExternalRowSorter.insertRow(UnsafeExternalRowSorter.java:141)
+	at org.apache.spark.sql.catalyst.expressions.GeneratedClass$GeneratedIteratorForCodegenStage17.bhj_doConsume_0$(Unknown Source)
+	at org.apache.spark.sql.catalyst.expressions.GeneratedClass$GeneratedIteratorForCodegenStage17.sort_addToSorter_0$(Unknown Source)
+	at org.apache.spark.sql.catalyst.expressions.GeneratedClass$GeneratedIteratorForCodegenStage17.processNext(Unknown Source)
+	at org.apache.spark.sql.execution.BufferedRowIterator.hasNext(BufferedRowIterator.java:44)
+	at org.apache.spark.sql.execution.WholeStageCodegenEvaluatorFactory$WholeStageCodegenPartitionEvaluator$$anon$1.hasNext(WholeStageCodegenEvaluatorFactory.scala:50)
+	at org.apache.spark.sql.catalyst.expressions.GeneratedClass$GeneratedIteratorForCodegenStage18.smj_findNextJoinRows_0$(Unknown Source)
+	at org.apache.spark.sql.catalyst.expressions.GeneratedClass$GeneratedIteratorForCodegenStage18.hashAgg_doAggregateWithKeys_1$(Unknown Source)
+	at org.apache.spark.sql.catalyst.expressions.GeneratedClass$GeneratedIteratorForCodegenStage18.hashAgg_doAggregateWithKeys_0$(Unknown Source)
+	at org.apache.spark.sql.catalyst.expressions.GeneratedClass$GeneratedIteratorForCodegenStage18.hashAgg_doAggregateWithoutKey_0$(Unknown Source)
+	at org.apache.spark.sql.catalyst.expressions.GeneratedClass$GeneratedIteratorForCodegenStage18.processNext(Unknown Source)
+	at org.apache.spark.sql.execution.BufferedRowIterator.hasNext(BufferedRowIterator.java:44)
+	at org.apache.spark.sql.execution.WholeStageCodegenEvaluatorFactory$WholeStageCodegenPartitionEvaluator$$anon$1.hasNext(WholeStageCodegenEvaluatorFactory.scala:50)
+	at scala.collection.Iterator$$anon$9.hasNext(Iterator.scala:593)
+	at org.apache.spark.shuffle.sort.BypassMergeSortShuffleWriter.write(BypassMergeSortShuffleWriter.java:153)
+	at org.apache.spark.shuffle.ShuffleWriteProcessor.write(ShuffleWriteProcessor.scala:57)
+	at org.apache.spark.scheduler.ShuffleMapTask.runTask(ShuffleMapTask.scala:111)
+	at org.apache.spark.scheduler.ShuffleMapTask.runTask(ShuffleMapTask.scala:54)
+	at org.apache.spark.TaskContext.runTaskWithListeners(TaskContext.scala:206)
+	at org.apache.spark.scheduler.Task.run(Task.scala:147)
+	at org.apache.spark.executor.Executor$TaskRunner.$anonfun$run$4(Executor.scala:894)
+	at org.apache.spark.executor.Executor$TaskRunner$$Lambda/0x0000018489cb2ba8.apply(Unknown Source)
+	at org.apache.spark.util.SparkErrorUtils.tryWithSafeFinally(SparkErrorUtils.scala:86)
+	at org.apache.spark.util.SparkErrorUtils.tryWithSafeFinally$(SparkErrorUtils.scala:83)
+	at org.apache.spark.util.Utils$.tryWithSafeFinally(Utils.scala:97)
+cross_channel_promo run 1: 83.8s, 2515.2 J
+daily_sales_report run 1: 26.2s, 711.6 J
+Traceback (most recent call last):
+  File "C:\Users\sharv\Documents\Codex\2026-10-31\https-github-com-vismayhs-greenshift-https-2\work\GreenShift\scripts\measure_jobs.py", line 131, in <module>
+    main()
+  File "C:\Users\sharv\Documents\Codex\2026-10-31\https-github-com-vismayhs-greenshift-https-2\work\GreenShift\scripts\measure_jobs.py", line 92, in main
+    raise RuntimeError("Job shorter than 30 s; increase catalogue repeats and restart campaign")
+RuntimeError: Job shorter than 30 s; increase catalogue repeats and restart campaign
+SUCCESS: The process with PID 23388 (child process of PID 12456) has been terminated.
+SUCCESS: The process with PID 12456 (child process of PID 8604) has been terminated.
+SUCCESS: The process with PID 8604 (child process of PID 34616) has been terminated.
