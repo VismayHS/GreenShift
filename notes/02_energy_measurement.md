@@ -74,6 +74,19 @@ Use memory_gb=0 and PUE=1 when comparing this package-only model to RAPL.
 The scheduler uses measured RAPL energy; its results do not depend on this
 weak model fit. Raw rows include the fitted model energy for inspection.
 
+### Immediate measured demo
+
+The separate fresh-Spark `--now` demo ran for 64.65 s. Its
+RAPL package reading was 2733.21 J; the same laptop run had
+0.000636707 attributable kWh using the latest accepted
+session's idle baseline. Published actual national CI gives
+**0.125431 g CO₂** for its occupied interval. The saved plan
+also labels 0.125431 g at current forecast CI and
+0.070038 g at the planned-slot forecast CI as
+counterfactual estimates. It is a fresh Spark process, so its energy can differ
+from the warmed five-run catalogue mean. No future planned-slot emissions were
+measured.
+
 ## Historical validation on the earlier machine
 
 ## The test machine

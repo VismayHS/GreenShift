@@ -82,11 +82,11 @@
   "live_dry_run": "passed",
   "offline_dry_run": "passed, labelled historical replay",
   "measured_live_demo": {
-    "status": "executed",
-    "actual": {
-      "status": "pending_actual",
-      "emissions_g": null
-    }
+    "status": "passed",
+    "actual_emissions_g": 0.1254312563296464,
+    "energy_basis": "attributable RAPL package kWh",
+    "actual_checked_at_utc": "2026-11-04T18:54:22.090940+00:00",
+    "source_plan": "results/plans/plan_2026-11-04.json"
   },
   "final_measured_backtest": "passed",
   "previous_placeholder_validation": "results/validation_placeholder/; not the final numerical results",

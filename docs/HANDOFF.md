@@ -62,7 +62,7 @@ This file holds everything researched, decided, built and measured so far, plus 
 | 6 | Carbon data cleaning + EDA | ✅ `carbon/clean.py`, `scripts/eda_carbon.py` (2026-10-27; findings below) |
 | 7 | Job catalogue + measurement campaign | SF5 all-query timing complete; calibrated SF1 fallback after two heap failures. 25 accepted RAPL rows; all five job cohorts pass <10% duration/energy CV. Three original cohorts plus two conditioned retries; full protocol and exclusions in `notes/02_energy_measurement.md` |
 | 8 | Scheduler policies + backtest simulator | Complete: measured-size 2024–2025 matrix, 437,448 rows and 157,512 plans independently verified; zero deadline/capacity violations (`results/verification.json`) |
-| 9 | Online scheduler + Airflow DAG | R15 live/offline planning and real immediate RAPL demo verified; actual-CI publication tracked in saved plan. Timed orchestration/Airflow remains optional future work |
+| 9 | Online scheduler + Airflow DAG | R15 live/offline planning and real immediate RAPL demo verified; published actual-CI score saved in plan. Timed orchestration/Airflow remains optional future work |
 | 10 | Savings report | ⏳ Site built: `frontend/` (story + Tonight view, React 19 + Vite 8 + Tailwind 4; data from `scripts/export_site_data.py`). Savings section pending the backtest. Tonight's planner (P0 + greedy P2, TS) mirrors §8; the Python scheduler stays the reference |
 | 11 | Tests | 50 Windows tests pass; Mac validation remains Person 3's task |
 

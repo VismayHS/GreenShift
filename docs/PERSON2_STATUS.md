@@ -1,7 +1,7 @@
 # Person 2 status — 2026-11-04
 
 Implementation, accepted RAPL measurements and measured-size backtesting are verified.
-The immediate measured demo ran successfully; its actual CI is awaiting API publication.
+The immediate measured demo ran successfully and its actual emissions were scored after API publication.
 
 ## Verified deliverables
 
@@ -21,8 +21,8 @@ The immediate measured demo ran successfully; its actual CI is awaiting API publ
   actual data and boundary skips are explicitly listed in metadata.
 - Live and offline dry-run plans passed using measured job sizes. The immediate
   RAPL demo ran for 64.65 seconds and measured 2,733.21 gross package joules.
-  Forecast comparisons are explicitly counterfactual; actual grams are refreshed
-  only when the API publishes the measured interval.
+  Its actual emissions are **0.125431 g CO₂** from published actual CI.
+  Forecast comparisons remain explicitly counterfactual.
 - Frontend unchanged. Commits use Sharvesh K's linked GitHub identity, with no
   co-author trailers. README contributor credit links to @SharveshK1228.
 
@@ -49,8 +49,8 @@ SCALE=32.63923280795001 and PUE=1.0. Fleet-scaled results are projections.
 .venv\Scripts\python scripts\run_scheduler.py --dry-run
 ```
 
-See `docs/PERSON2.md` for hardware measurement and retry commands. Use
-`scripts/score_demo.py results/plans/plan_2026-11-04.json` to refresh actual CI.
+See `docs/PERSON2.md` for hardware measurement and retry commands. The saved demo plan includes its published actual CI score. Rerun
+`scripts/score_demo.py results/plans/plan_2026-11-04.json` if the API revises it.
 
 ## Limitations and remaining team work
 

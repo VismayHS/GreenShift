@@ -209,13 +209,13 @@
       "measurement_ready": true
     },
     "actual": {
-      "status": "pending_actual",
-      "emissions_g": null
+      "status": "actual",
+      "emissions_g": 0.1254312563296464
     },
     "energy_basis": "attributable",
     "current_forecast_g": 0.1254312563296464,
     "planned_forecast_g": 0.07003775734142692,
     "comparison": "same measured laptop energy at current/planned forecast CI; counterfactual, not actual avoided emissions",
-    "actual_checked_at_utc": "2026-11-04T16:24:37.329292+00:00"
+    "actual_checked_at_utc": "2026-11-04T18:54:22.090940+00:00"
   }
 }
