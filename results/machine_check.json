@@ -1,9 +1,9 @@
 {
-  "recorded_at_utc": "2026-11-04T08:12:55.004656+00:00",
+  "recorded_at_utc": "2026-11-04T16:22:29.686388+00:00",
   "os": "Windows-11-10.0.26300-SP0",
   "cpu": "13th Gen Intel(R) Core(TM) i5-13450HX",
   "ram_bytes": 25463480320,
-  "available_ram_bytes": 12479524864,
+  "available_ram_bytes": 12608860160,
   "logical_cpus": 16,
   "python": "3.12.4",
   "room_conditions": "unknown; not supplied",
@@ -11,7 +11,7 @@
   "ac_power": true,
   "power_scheme": "Power Scheme GUID: 381b4222-f694-41f0-9685-ff5bb260df2e  (Balanced)",
   "power_mode_guid": "961cc777-2547-4f9d-8174-7d86181b8a7a",
-  "selected_ac_power_mode_guid": "00000000-0000-0000-0000-000000000000",
+  "selected_ac_power_mode_guid": "ded574b5-45a0-4f42-8737-46345c09c238",
   "power_mode_source": "selected AC overlay plus OEM effective overlay",
   "java": "C:\\Program Files\\Common Files\\Oracle\\Java\\javapath\\java.EXE",
   "spark_jdk": "C:\\Users\\sharv\\Documents\\Codex\\2026-10-31\\https-github-com-vismayhs-greenshift-https-2\\work\\GreenShift\\.tools\\jdk-21.0.13+9",
@@ -25,9 +25,9 @@
   },
   "sensor": "RaplWindows",
   "rapl_initial_j": {
-    "PKG": 78715.12846199759,
-    "PP0": 35482.0191449976,
-    "PP1": 444.4596639972,
+    "PKG": 319035.7604739996,
+    "PP0": 179128.5101329968,
+    "PP1": 627.124896,
     "DRAM": 0.0
   },
   "measurement_ready": true

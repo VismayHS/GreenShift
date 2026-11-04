@@ -1,39 +1,78 @@
 # 02: Measuring Spark job energy
 
-## Person 2 campaign status (2026-11-04)
+## Accepted Person 2 measurements (2026-11-04)
 
-The current machine is Windows 11, Intel Core i5-13450HX, approximately 24 GB
-RAM, Spark 4.2.0 and portable JDK 21. RAPL is available. These facts are distinct
-from the earlier i5-12450H experiments below.
+Windows 11; Intel Core i5-13450HX; approximately 24 GB RAM; Spark 4.2.0;
+portable JDK 21; local[4], 8 GB driver heap; SF1 with the catalogue repeat counts.
+All 99 SF5 queries were timed first. Two sustained SF5 attempts exhausted the
+heap, justifying the TEAM_PLAN SF1 fallback. This is a workload derived from
+TPC-DS; not comparable with published TPC-DS results.
 
-All 99 SF5 queries were timed. Two sustained SF5 attempts exhausted the heap;
-the catalogue therefore uses the explicitly permitted SF1 fallback with repeated
-query groups. The latest catalogue doubles the warmed pilot repetitions to
-protect the minimum 30-second duration. This is a workload derived from TPC-DS;
-not comparable with published TPC-DS results.
+### Measurement table
 
-**No final measurement table is available yet.** Completed readings from the
-16-run attempt are preserved in
-`results/measurement_attempts/2026-11-03-user-paused-after16/`. The operator
-paused that session before its closing idle baseline and remaining repeats.
-A fresh 2026-11-04 campaign stopped during warmup when continuous monitoring
-detected AC disconnection; its metadata and log are preserved separately.
-Earlier heap, reboot and power-transition failures are retained as whole attempts.
-None is pooled into a final dataset or presented as a successful campaign.
+All figures below are measured laptop CPU-package values, before fleet scaling.
+Each job has five accepted readings; standard deviations use n−1 and intervals
+use the two-sided Student-t 95% confidence interval.
 
-Final acceptance requires uninterrupted AC, the selected Best performance mode,
-60-second idle bookends, one warmup per job, at least five randomized measured
-runs per job, 20-second cooldowns, and the implemented duration/energy quality
-gates. Room temperature, cooling details and background application closure
-remain unknown, as authorized by the operator. Automatic sleep is inhibited;
-manual suspension or an AC disconnect invalidates the session.
+| Job | n | Duration mean ± SD (s) | Duration 95% CI (s) | Gross package mean ± SD (J) | Attributable mean ± SD (J) | Attributable 95% CI (J) | Attributable kWh | Energy CV |
+|---|---:|---:|---|---:|---:|---|---:|---:|
+| inventory_supply_chain | 5 | 146.13 ± 2.98 | 142.42–149.83 | 3080.49 ± 65.81 | 1712.46 ± 56.11 | 1642.79–1782.13 | 0.00047568 | 3.28% |
+| returns_audit | 5 | 125.30 ± 2.17 | 122.60–127.99 | 2425.99 ± 49.52 | 1252.97 ± 31.63 | 1213.69–1292.24 | 0.00034805 | 2.52% |
+| customer_analytics | 5 | 110.02 ± 2.75 | 106.60–113.44 | 2200.18 ± 105.95 | 1170.20 ± 89.84 | 1058.65–1281.75 | 0.00032506 | 7.68% |
+| daily_sales_report | 5 | 93.43 ± 3.47 | 89.12–97.73 | 1666.53 ± 38.60 | 1029.12 ± 27.41 | 995.08–1063.15 | 0.00028587 | 2.66% |
+| cross_channel_promo | 5 | 220.59 ± 1.57 | 218.65–222.54 | 4523.77 ± 40.25 | 3018.73 ± 31.66 | 2979.41–3058.04 | 0.00083854 | 1.05% |
 
-The final report must give gross package joules/kWh and idle-subtracted
-attributable joules/kWh, sample standard deviations, Student-t 95% confidence
-intervals, repeat counts, coefficients of variation and calibration R².
-Scheduling uses attributable CPU-package energy. No DRAM or whole-machine
-energy is silently added to this RAPL quantity. Synthetic placeholder validation
-outputs must not be quoted as measured savings.
+Full precision and confidence intervals for every recorded metric are in
+`results/measurements_summary.csv`; the 25 accepted rows are in
+`results/measurements.csv`. Every accepted run exceeds 30 seconds. Both duration
+and attributable-energy CV are below 10% for every job.
+
+### Protocol, retries and provenance
+
+The initial uninterrupted session measured all five jobs in randomized order:
+one warmup per job, five initial repeats per job, 20-second cooldowns and
+60-second idle bookends. Daily sales and cross-channel failed the energy-CV
+gate; one extra run each still left approximately 31–32% CV. All 27 readings
+and their closing idle baseline are archived. The three complete passing job
+cohorts were retained. No individual outlier was removed.
+
+The two failed cohorts were retried in a separate session with three full
+conditioning passes before its start idle baseline, then the required warmup
+and five randomized repeats per job. Both complete retry cohorts passed.
+The final dataset therefore accepts 15 rows from the initial session and all
+10 rows from the retry. The 12 rejected rows remain archived and referenced in
+`measurements_meta.json`. The conditioning period is excluded from statistics.
+This protocol revision and selection by whole-cohort quality must be disclosed;
+the retry does not establish the cause of the original variability.
+
+| Session | Start idle (W) | End idle (W) | Mean subtracted (W) | Accepted jobs |
+|---|---:|---:|---:|---|
+| 2026-11-04-initial-quality | 11.849 | 6.875 | 9.362 | inventory_supply_chain, returns_audit, customer_analytics |
+| 2026-11-04-conditioned-retry | 6.946 | 6.699 | 6.823 | daily_sales_report, cross_channel_promo |
+
+Each accepted row retains its own session baseline: attributable J = gross
+package J − session mean idle W × duration s; kWh = J / 3.6e6.
+`MeterResult.kwh` is backwards-compatible gross energy. Scheduling explicitly
+uses attributable kWh. CPU-package RAPL excludes DRAM (zero/unsupported here),
+SSD, screen, fans and wall-socket losses; no RAM estimate is silently added.
+
+AC was confirmed and continuously monitored during the accepted sessions.
+Windows Best performance was selected (AC overlay
+`ded574b5-45a0-4f42-8737-46345c09c238`); the OEM effective overlay and Balanced
+base scheme are recorded separately. Automatic sleep was inhibited. Room
+temperature, cooling details and background application closure were unknown.
+Idle drift and between-session conditions limit attribution accuracy even when
+within-job CV passes. Earlier interrupted attempts remain separate and excluded.
+
+### Utilisation-model calibration
+
+The linear fit on all 25 accepted runs gives **R² = 0.1058**,
+intercept 17.058 W and full-utilisation coefficient
+27.084 W. This is a weak in-sample fit, not a validated portable
+energy estimator. The fitted intercept is not the measured idle baseline.
+Use memory_gb=0 and PUE=1 when comparing this package-only model to RAPL.
+The scheduler uses measured RAPL energy; its results do not depend on this
+weak model fit. Raw rows include the fitted model energy for inspection.
 
 ## Historical validation on the earlier machine
 

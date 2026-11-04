@@ -1,0 +1,43 @@
+WARNING: Using incubator modules: jdk.incubator.vector
+26/11/04 19:32:24 WARN Shell: Did not find winutils.exe: java.io.FileNotFoundException: java.io.FileNotFoundException: HADOOP_HOME and hadoop.home.dir are unset. -see https://cwiki.apache.org/confluence/display/HADOOP2/WindowsProblems
+Using Spark's default log4j profile: org/apache/spark/log4j2-defaults.properties
+Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
+26/11/04 19:32:24 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+26/11/04 19:32:31 WARN SparkStringUtils: Truncated the string representation of a plan since it was too large. This behavior can be adjusted by setting 'spark.sql.debug.maxToStringFields'.
+Conditioning 1/3: daily_sales_report
+Conditioning 1/3: cross_channel_promo
+Conditioning 2/3: cross_channel_promo
+Conditioning 2/3: daily_sales_report
+Conditioning 3/3: daily_sales_report
+Conditioning 3/3: cross_channel_promo
+idle_start: 60 seconds
+Warmup daily_sales_report
+Warmup cross_channel_promo
+Measuring daily_sales_report
+daily_sales_report run 1: 97.5s, 1718.2 J
+Measuring cross_channel_promo
+cross_channel_promo run 1: 221.6s, 4556.5 J
+Measuring daily_sales_report
+daily_sales_report run 2: 95.7s, 1667.6 J
+Measuring cross_channel_promo
+cross_channel_promo run 2: 222.3s, 4566.4 J
+Measuring cross_channel_promo
+cross_channel_promo run 3: 221.2s, 4525.4 J
+Measuring daily_sales_report
+daily_sales_report run 3: 92.9s, 1687.5 J
+Measuring cross_channel_promo
+cross_channel_promo run 4: 218.5s, 4502.9 J
+Measuring daily_sales_report
+daily_sales_report run 4: 88.4s, 1638.1 J
+Measuring daily_sales_report
+daily_sales_report run 5: 92.7s, 1621.3 J
+Measuring cross_channel_promo
+cross_channel_promo run 5: 219.4s, 4467.6 J
+idle_end: 60 seconds
+                job  n  duration_s_mean  attributable_kwh_mean  duration_s_cv  attributable_j_cv  quality_pass
+ daily_sales_report  5        93.425746               0.000286       0.037099           0.026636          True
+cross_channel_promo  5       220.593420               0.000839       0.007098           0.010489          True
+SUCCESS: The process with PID 27108 (child process of PID 13876) has been terminated.
+SUCCESS: The process with PID 13876 (child process of PID 11036) has been terminated.
+SUCCESS: The process with PID 11036 (child process of PID 11824) has been terminated.

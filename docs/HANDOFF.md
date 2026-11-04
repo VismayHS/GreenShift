@@ -60,11 +60,11 @@ This file holds everything researched, decided, built and measured so far, plus 
 | 4 | Energy meter (RAPL / battery / model + Spark metrics) | ✅ tested on Windows. ✅ Linux RAPL reader tested (needs `sudo chmod` after each boot) |
 | 5 | TPC-DS data generation + Spark compatibility | ✅ SF1; **99/99 queries run** on Windows and on Linux |
 | 6 | Carbon data cleaning + EDA | ✅ `carbon/clean.py`, `scripts/eda_carbon.py` (2026-10-27; findings below) |
-| 7 | Job catalogue + measurement campaign | SF5 all-query timing complete; calibrated SF1 fallback after two heap failures. Final campaign blocked by interruptions; all attempts preserved in `results/measurement_attempts/`, with current status in `notes/02_energy_measurement.md` |
+| 7 | Job catalogue + measurement campaign | SF5 all-query timing complete; calibrated SF1 fallback after two heap failures. 25 accepted RAPL rows; all five job cohorts pass <10% duration/energy CV. Three original cohorts plus two conditioned retries; full protocol and exclusions in `notes/02_energy_measurement.md` |
 | 8 | Scheduler policies + backtest simulator | P0/P2/P3/P4, causal API fallback, oracle/noisy modes, two-year nightly and paper scenarios implemented; independent audit in `results/verification.json` |
 | 9 | Online scheduler + Airflow DAG | R15 live/offline planning and immediate measured demo implemented. Timed orchestration/Airflow remains optional future work |
 | 10 | Savings report | ⏳ Site built: `frontend/` (story + Tonight view, React 19 + Vite 8 + Tailwind 4; data from `scripts/export_site_data.py`). Savings section pending the backtest. Tonight's planner (P0 + greedy P2, TS) mirrors §8; the Python scheduler stays the reference |
-| 11 | Tests | 49 Windows tests pass; Mac validation remains Person 3's task |
+| 11 | Tests | 50 Windows tests pass; Mac validation remains Person 3's task |
 
 ### Linux machine (set up 2026-10-27)
 

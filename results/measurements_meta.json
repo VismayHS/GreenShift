@@ -1,0 +1,235 @@
+{
+  "recorded_at_utc": "2026-11-04T14:01:48.050019+00:00",
+  "os": "Windows-11-10.0.26300-SP0",
+  "cpu": "13th Gen Intel(R) Core(TM) i5-13450HX",
+  "ram_bytes": 25463480320,
+  "available_ram_bytes": 13049929728,
+  "logical_cpus": 16,
+  "python": "3.12.4",
+  "room_conditions": "AC confirmed and continuously guarded. Room/cooling/background app closure unknown. Three conditioning passes before standard idle-bookended retry of two whole failed cohorts.",
+  "background_apps": "not automatically closed; operator must confirm",
+  "ac_power": true,
+  "power_scheme": "Power Scheme GUID: 381b4222-f694-41f0-9685-ff5bb260df2e  (Balanced)",
+  "power_mode_guid": "961cc777-2547-4f9d-8174-7d86181b8a7a",
+  "selected_ac_power_mode_guid": "ded574b5-45a0-4f42-8737-46345c09c238",
+  "power_mode_source": "selected AC overlay plus OEM effective overlay",
+  "java": "C:\\Program Files\\Common Files\\Oracle\\Java\\javapath\\java.EXE",
+  "spark_jdk": "C:\\Users\\sharv\\Documents\\Codex\\2026-10-31\\https-github-com-vismayhs-greenshift-https-2\\work\\GreenShift\\.tools\\jdk-21.0.13+9",
+  "versions": {
+    "pyspark": "4.2.0",
+    "duckdb": "2.0.0",
+    "pandas": "2.3.3",
+    "numpy": "2.5.4",
+    "psutil": "7.2.2",
+    "pyarrow": "26.0.0"
+  },
+  "sensor": "RaplWindows",
+  "rapl_initial_j": {
+    "PKG": 250957.8575789976,
+    "PP0": 131626.8834819984,
+    "PP1": 585.274077,
+    "DRAM": 0.0
+  },
+  "measurement_ready": true,
+  "scale_factor": 1,
+  "seed": 20261031,
+  "cores": "4",
+  "driver_memory": "8g",
+  "operator_session_authorized": true,
+  "git_commit": "0f09116687fab9c7c480cacf3cca7615b845838b",
+  "status": "complete",
+  "extra_runs": [],
+  "energy_basis": "attributable CPU-package kWh",
+  "selected_jobs": [
+    "daily_sales_report",
+    "customer_analytics",
+    "inventory_supply_chain",
+    "cross_channel_promo",
+    "returns_audit"
+  ],
+  "conditioning_rounds": 3,
+  "idle_start_started_at_utc": "2026-11-04T14:18:52.655191+00:00",
+  "idle_start_w": 6.946002863679469,
+  "idle_end_started_at_utc": "2026-11-04T14:54:48.451481+00:00",
+  "idle_end_w": 6.699371937972625,
+  "calibration": {
+    "p_idle_w": 17.05806793924285,
+    "p_max_w": 27.08441314935871,
+    "r2": 0.10584329605840093,
+    "n": 25,
+    "fit": "run-average RAPL package watts versus time-weighted CPU utilisation",
+    "scope": "CPU package only; set memory_gb=0 and pue=1 for comparison",
+    "physical_coefficients": true
+  },
+  "idle_used_w": 6.822687400826047,
+  "completed_at_utc": "2026-11-04T14:55:51.202234+00:00",
+  "sessions": [
+    {
+      "id": "2026-11-04-initial-quality",
+      "path": "results/measurement_attempts/2026-11-04-initial-quality",
+      "metadata": {
+        "recorded_at_utc": "2026-11-04T12:27:28.445833+00:00",
+        "os": "Windows-11-10.0.26300-SP0",
+        "cpu": "13th Gen Intel(R) Core(TM) i5-13450HX",
+        "ram_bytes": 25463480320,
+        "available_ram_bytes": 12660158464,
+        "logical_cpus": 16,
+        "python": "3.12.4",
+        "room_conditions": "Room temperature, cooling details and background app closure unknown; operator confirmed AC and authorized the session. SF1 fallback after two SF5 heap failures.",
+        "background_apps": "not automatically closed; operator must confirm",
+        "ac_power": true,
+        "power_scheme": "Power Scheme GUID: 381b4222-f694-41f0-9685-ff5bb260df2e  (Balanced)",
+        "power_mode_guid": "961cc777-2547-4f9d-8174-7d86181b8a7a",
+        "selected_ac_power_mode_guid": "ded574b5-45a0-4f42-8737-46345c09c238",
+        "power_mode_source": "selected AC overlay plus OEM effective overlay",
+        "java": "C:\\Program Files\\Common Files\\Oracle\\Java\\javapath\\java.EXE",
+        "spark_jdk": "C:\\Users\\sharv\\Documents\\Codex\\2026-10-31\\https-github-com-vismayhs-greenshift-https-2\\work\\GreenShift\\.tools\\jdk-21.0.13+9",
+        "versions": {
+          "pyspark": "4.2.0",
+          "duckdb": "2.0.0",
+          "pandas": "2.3.3",
+          "numpy": "2.5.4",
+          "psutil": "7.2.2",
+          "pyarrow": "26.0.0"
+        },
+        "sensor": "RaplWindows",
+        "rapl_initial_j": {
+          "PKG": 144875.5604679996,
+          "PP0": 58054.7165649984,
+          "PP1": 489.271545,
+          "DRAM": 0.0
+        },
+        "measurement_ready": true,
+        "scale_factor": 1,
+        "seed": 20261031,
+        "cores": "4",
+        "driver_memory": "8g",
+        "operator_session_authorized": true,
+        "git_commit": "59f9b7a0076475308f982df806b249fdd4516434",
+        "status": "quality_failed",
+        "extra_runs": [
+          {
+            "jobs": [
+              "daily_sales_report",
+              "cross_channel_promo"
+            ],
+            "reason": "duration or attributable-energy CV >=10%, or nonpositive energy"
+          },
+          {
+            "jobs": [
+              "daily_sales_report",
+              "cross_channel_promo"
+            ],
+            "reason": "duration or attributable-energy CV >=10%, or nonpositive energy"
+          }
+        ],
+        "energy_basis": "attributable CPU-package kWh",
+        "idle_start_w": 11.849471107275795,
+        "idle_end_w": 6.874550694749216,
+        "calibration": {
+          "p_idle_w": 11.309099468787348,
+          "p_max_w": 42.9722275003849,
+          "r2": 0.6681391545013701,
+          "n": 27,
+          "fit": "run-average RAPL package watts versus time-weighted CPU utilisation",
+          "scope": "CPU package only; set memory_gb=0 and pue=1 for comparison",
+          "physical_coefficients": true
+        },
+        "idle_used_w": 9.362010901012505,
+        "failure": "Stopped at a completed extra-round idle bookend for quality review; no rows discarded."
+      },
+      "csv_sha256": "5dfc6c35a9add8d3a4c9da128cae320c506bd2b751c0f4bf4d997d7d1fda63e9"
+    },
+    {
+      "id": "2026-11-04-conditioned-retry",
+      "path": "results/measurement_attempts/2026-11-04-conditioned-retry",
+      "metadata": {
+        "recorded_at_utc": "2026-11-04T14:01:48.050019+00:00",
+        "os": "Windows-11-10.0.26300-SP0",
+        "cpu": "13th Gen Intel(R) Core(TM) i5-13450HX",
+        "ram_bytes": 25463480320,
+        "available_ram_bytes": 13049929728,
+        "logical_cpus": 16,
+        "python": "3.12.4",
+        "room_conditions": "AC confirmed and continuously guarded. Room/cooling/background app closure unknown. Three conditioning passes before standard idle-bookended retry of two whole failed cohorts.",
+        "background_apps": "not automatically closed; operator must confirm",
+        "ac_power": true,
+        "power_scheme": "Power Scheme GUID: 381b4222-f694-41f0-9685-ff5bb260df2e  (Balanced)",
+        "power_mode_guid": "961cc777-2547-4f9d-8174-7d86181b8a7a",
+        "selected_ac_power_mode_guid": "ded574b5-45a0-4f42-8737-46345c09c238",
+        "power_mode_source": "selected AC overlay plus OEM effective overlay",
+        "java": "C:\\Program Files\\Common Files\\Oracle\\Java\\javapath\\java.EXE",
+        "spark_jdk": "C:\\Users\\sharv\\Documents\\Codex\\2026-10-31\\https-github-com-vismayhs-greenshift-https-2\\work\\GreenShift\\.tools\\jdk-21.0.13+9",
+        "versions": {
+          "pyspark": "4.2.0",
+          "duckdb": "2.0.0",
+          "pandas": "2.3.3",
+          "numpy": "2.5.4",
+          "psutil": "7.2.2",
+          "pyarrow": "26.0.0"
+        },
+        "sensor": "RaplWindows",
+        "rapl_initial_j": {
+          "PKG": 250957.8575789976,
+          "PP0": 131626.8834819984,
+          "PP1": 585.274077,
+          "DRAM": 0.0
+        },
+        "measurement_ready": true,
+        "scale_factor": 1,
+        "seed": 20261031,
+        "cores": "4",
+        "driver_memory": "8g",
+        "operator_session_authorized": true,
+        "git_commit": "03a22c8b89790cb7525d424546c59188d3f5668f",
+        "status": "complete",
+        "extra_runs": [],
+        "energy_basis": "attributable CPU-package kWh",
+        "selected_jobs": [
+          "daily_sales_report",
+          "cross_channel_promo"
+        ],
+        "conditioning_rounds": 3,
+        "idle_start_started_at_utc": "2026-11-04T14:18:52.655191+00:00",
+        "idle_start_w": 6.946002863679469,
+        "idle_end_started_at_utc": "2026-11-04T14:54:48.451481+00:00",
+        "idle_end_w": 6.699371937972625,
+        "calibration": {
+          "p_idle_w": 8.871938698493395,
+          "p_max_w": 46.72674295476588,
+          "r2": 0.9570192531789812,
+          "n": 10,
+          "fit": "run-average RAPL package watts versus time-weighted CPU utilisation",
+          "scope": "CPU package only; set memory_gb=0 and pue=1 for comparison",
+          "physical_coefficients": true
+        },
+        "idle_used_w": 6.822687400826047,
+        "completed_at_utc": "2026-11-04T14:55:48.475298+00:00"
+      },
+      "csv_sha256": "538da2c6fd9e1a3e26c42f2ca658020959dad12ed7d313f07a9d83b044cd538a"
+    }
+  ],
+  "selected_cohorts": {
+    "inventory_supply_chain": "2026-11-04-initial-quality",
+    "returns_audit": "2026-11-04-initial-quality",
+    "customer_analytics": "2026-11-04-initial-quality",
+    "daily_sales_report": "2026-11-04-conditioned-retry",
+    "cross_channel_promo": "2026-11-04-conditioned-retry"
+  },
+  "excluded_cohorts": [
+    {
+      "session": "2026-11-04-initial-quality",
+      "job": "cross_channel_promo",
+      "n": 6,
+      "reason": "whole cohort failed the predefined quality gate"
+    },
+    {
+      "session": "2026-11-04-initial-quality",
+      "job": "daily_sales_report",
+      "n": 6,
+      "reason": "whole cohort failed the predefined quality gate"
+    }
+  ],
+  "protocol": "Whole job cohorts passing the same quality gate; failed cohorts retained in full; conditioned retry is a separate randomized session.",
+  "idle_accounting": "Each row retains its own session's mean idle bookends; root idle_used_w is the latest session baseline for the immediate demo."
+}

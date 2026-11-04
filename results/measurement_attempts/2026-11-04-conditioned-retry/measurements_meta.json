@@ -1,0 +1,63 @@
+{
+  "recorded_at_utc": "2026-11-04T14:01:48.050019+00:00",
+  "os": "Windows-11-10.0.26300-SP0",
+  "cpu": "13th Gen Intel(R) Core(TM) i5-13450HX",
+  "ram_bytes": 25463480320,
+  "available_ram_bytes": 13049929728,
+  "logical_cpus": 16,
+  "python": "3.12.4",
+  "room_conditions": "AC confirmed and continuously guarded. Room/cooling/background app closure unknown. Three conditioning passes before standard idle-bookended retry of two whole failed cohorts.",
+  "background_apps": "not automatically closed; operator must confirm",
+  "ac_power": true,
+  "power_scheme": "Power Scheme GUID: 381b4222-f694-41f0-9685-ff5bb260df2e  (Balanced)",
+  "power_mode_guid": "961cc777-2547-4f9d-8174-7d86181b8a7a",
+  "selected_ac_power_mode_guid": "ded574b5-45a0-4f42-8737-46345c09c238",
+  "power_mode_source": "selected AC overlay plus OEM effective overlay",
+  "java": "C:\\Program Files\\Common Files\\Oracle\\Java\\javapath\\java.EXE",
+  "spark_jdk": "C:\\Users\\sharv\\Documents\\Codex\\2026-10-31\\https-github-com-vismayhs-greenshift-https-2\\work\\GreenShift\\.tools\\jdk-21.0.13+9",
+  "versions": {
+    "pyspark": "4.2.0",
+    "duckdb": "2.0.0",
+    "pandas": "2.3.3",
+    "numpy": "2.5.4",
+    "psutil": "7.2.2",
+    "pyarrow": "26.0.0"
+  },
+  "sensor": "RaplWindows",
+  "rapl_initial_j": {
+    "PKG": 250957.8575789976,
+    "PP0": 131626.8834819984,
+    "PP1": 585.274077,
+    "DRAM": 0.0
+  },
+  "measurement_ready": true,
+  "scale_factor": 1,
+  "seed": 20261031,
+  "cores": "4",
+  "driver_memory": "8g",
+  "operator_session_authorized": true,
+  "git_commit": "03a22c8b89790cb7525d424546c59188d3f5668f",
+  "status": "complete",
+  "extra_runs": [],
+  "energy_basis": "attributable CPU-package kWh",
+  "selected_jobs": [
+    "daily_sales_report",
+    "cross_channel_promo"
+  ],
+  "conditioning_rounds": 3,
+  "idle_start_started_at_utc": "2026-11-04T14:18:52.655191+00:00",
+  "idle_start_w": 6.946002863679469,
+  "idle_end_started_at_utc": "2026-11-04T14:54:48.451481+00:00",
+  "idle_end_w": 6.699371937972625,
+  "calibration": {
+    "p_idle_w": 8.871938698493395,
+    "p_max_w": 46.72674295476588,
+    "r2": 0.9570192531789812,
+    "n": 10,
+    "fit": "run-average RAPL package watts versus time-weighted CPU utilisation",
+    "scope": "CPU package only; set memory_gb=0 and pue=1 for comparison",
+    "physical_coefficients": true
+  },
+  "idle_used_w": 6.822687400826047,
+  "completed_at_utc": "2026-11-04T14:55:48.475298+00:00"
+}

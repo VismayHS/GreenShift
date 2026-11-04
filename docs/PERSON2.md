@@ -247,3 +247,7 @@ selection. Each accepted row retains its own session's idle subtraction. The
 final metadata maps every job to its source session and records exclusions,
 source hashes and the combined calibration. The latest session idle is used only
 for the subsequent immediate demo, explicitly identified in metadata.
+
+The immediate demo starts a fresh Spark process and is outside the warmed campaign.
+Its measured energy may differ from the catalogue mean; it reports its own RAPL
+readings and labels forecast comparisons as counterfactual estimates.

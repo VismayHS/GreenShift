@@ -1,5 +1,5 @@
 {
-  "status": "Conservative doubled batches; final campaign quality gate required",
+  "status": "Measured SF1 catalogue; all accepted complete cohorts pass duration and energy quality gates",
   "window": {
     "release_local": "22:00",
     "deadline_local": "07:00",
@@ -92,5 +92,7 @@
     }
   ],
   "scale_factor": 1,
-  "scale_factor_reason": "SF5 query timing succeeded, but two sustained SF5 campaigns reported Java heap exhaustion; SF1 fallback permitted by TEAM_PLAN R0c."
+  "scale_factor_reason": "SF5 query timing succeeded, but two sustained SF5 campaigns reported Java heap exhaustion; SF1 fallback permitted by TEAM_PLAN R0c.",
+  "timing_pass_scale_factor": 5,
+  "measurement_evidence": "results/measurements.csv and results/measurements_meta.json"
 }
