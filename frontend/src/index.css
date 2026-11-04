@@ -1,75 +1,40 @@
-@import "tailwindcss";
-@import "@fontsource-variable/atkinson-hyperlegible-next";
+/* GreenShift on the Exhibit Register design system (Vertex_design.md).
+   Fonts are bundled (fontsource) so the site renders the same with Wi-Fi off. */
+@import '@fontsource-variable/noto-sans/wdth.css';
+@import '@fontsource/ibm-plex-mono/400.css';
+@import '@fontsource/ibm-plex-mono/500.css';
+@import '@fontsource/ibm-plex-mono/600.css';
+@import 'tailwindcss';
+@import './vx/vx.css';
 
-/* Synoptic chart world: chart paper, isobar ink, H in brick, L in deep green.
-   Light only, by scene: a projected viva room and a laptop in daylight. */
-@theme {
-  --font-sans: "Atkinson Hyperlegible Next Variable", ui-sans-serif, system-ui, sans-serif;
-  --color-paper: #f1f3ee;
-  --color-paper-2: #e3e8e0;
-  --color-paper-3: #d4dbd1;
-  --color-ink: #13243a;
-  --color-ink-2: #3a4a5c;
-  --color-low: #1f6b4a;
-  --color-low-2: #2f8a62;
-  --color-high: #a63d2a;
-  --color-front: #2a5d9f;
-  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+@theme inline {
+  --color-vx-paper: var(--vx-paper);
+  --color-vx-sheet: var(--vx-sheet);
+  --color-vx-rail: var(--vx-rail);
+  --color-vx-hover: var(--vx-hover);
+  --color-vx-rule: var(--vx-rule);
+  --color-vx-rule-strong: var(--vx-rule-strong);
+  --color-vx-ink: var(--vx-ink);
+  --color-vx-ink-2: var(--vx-ink-2);
+  --color-vx-ink-3: var(--vx-ink-3);
+  --color-vx-stamp: var(--vx-stamp);
+  --color-vx-stamp-deep: var(--vx-stamp-deep);
+  --color-vx-stamp-wash: var(--vx-stamp-wash);
+  --color-vx-seal: var(--vx-seal);
+  --color-vx-strong: var(--vx-strong);
+  --color-vx-strong-wash: var(--vx-strong-wash);
+  --color-vx-possible: var(--vx-possible);
+  --color-vx-possible-wash: var(--vx-possible-wash);
+  --color-vx-fail: var(--vx-fail);
+  --color-vx-fail-wash: var(--vx-fail-wash);
+  --font-vx: var(--vx-font);
+  --font-vxmono: var(--vx-mono);
+  --shadow-lift: var(--vx-shadow-lift);
 }
 
-:root {
-  color-scheme: light;
-  background: var(--color-paper);
-  color: var(--color-ink);
-  font-family: var(--font-sans);
-  font-size: 18px;
-  line-height: 1.5;
-  font-variant-numeric: tabular-nums;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
-  scrollbar-color: var(--color-ink-2) var(--color-paper-2);
-}
-
-::selection {
-  background: var(--color-low);
-  color: var(--color-paper);
-}
-
-:focus-visible {
-  outline: 3px solid var(--color-front);
-  outline-offset: 3px;
-  border-radius: 2px;
-}
-
-a {
-  text-underline-offset: 0.22em;
-  text-decoration-thickness: 0.08em;
-}
-
-h1, h2, h3 {
-  text-wrap: balance;
-  letter-spacing: -0.025em;
-  line-height: 1;
-}
-
-p { text-wrap: pretty; }
-
-/* Entrance helper: visible by default, so content never depends on script. */
-.rise {
-  transition: opacity 700ms var(--ease-out-expo), transform 700ms var(--ease-out-expo);
-}
-.rise[data-pending="true"] {
-  opacity: 0;
-  transform: translateY(24px);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .rise, .rise[data-pending="true"] {
-    transition: none;
-    opacity: 1;
-    transform: none;
+@layer base {
+  button:not(:disabled),
+  [role='button']:not(:disabled) {
+    cursor: pointer;
   }
 }
-
-/* Grid items may shrink below their content, so measured charts fit the column. */
-.grid > * { min-width: 0; }
