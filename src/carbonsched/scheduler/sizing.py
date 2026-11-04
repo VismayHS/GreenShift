@@ -78,8 +78,8 @@ def load_sizes(catalogue: Path, measurements: Path, config: dict) -> tuple[list[
         stats = summary.loc[job["name"]]
         sizes.append({**job, "duration_slots": max(1, math.ceil(stats.duration_s * scale / 1800 - 1e-12)),
                       "energy_kwh": stats.attributable_kwh * scale * pue})
-    return sizes, {"source": "measurements", "scale": scale, "pue": pue,
-                   "target_scale": target_scale, "capacity_adjusted": scale < target_scale - 1e-9,
+    return sizes, {"source": "measurements", "scale": float(scale), "pue": pue,
+                   "target_scale": float(target_scale), "capacity_adjusted": bool(scale < target_scale - 1e-9),
                    "energy_basis": "attributable CPU-package kWh",
                    "measurements": str(measurements), "rounding": "ceil duration to 30 min; energy conserved"}
 

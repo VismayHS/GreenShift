@@ -15,6 +15,7 @@ def test_scaling_preserves_energy_and_marks_placeholders(tmp_path):
     assert meta["scale"]==120
     assert sizes[0]["duration_slots"]==4
     assert sizes[0]["energy_kwh"]==pytest.approx(0.18)
+    assert json.loads(json.dumps(meta, allow_nan=False))["capacity_adjusted"] is False
 
 
 def test_automatic_scale_fits_spring_dst_night(tmp_path):
@@ -28,3 +29,4 @@ def test_automatic_scale_fits_spring_dst_night(tmp_path):
     sizes,meta=load_sizes(cat,csv,cfg)
     assert sum(j["duration_slots"] for j in sizes)<=16
     assert meta["capacity_adjusted"]
+    assert json.loads(json.dumps(meta, allow_nan=False))["capacity_adjusted"] is True
