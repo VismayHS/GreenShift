@@ -1,11 +1,24 @@
 {
-  "recorded_at_utc": "2026-11-04T08:48:07.573468+00:00",
-  "source_commit": "70913a58e63e73a1ba5cd95b35ea91541e6baca1",
+  "recorded_at_utc": "2026-11-04T16:26:39.948863+00:00",
+  "source_commit": "ed4f649e8e73a8898838a6558b030071e681cdb2",
   "tests": {
-    "passed": 49,
+    "passed": 50,
     "warnings": 184,
     "platform": "Windows",
     "command": "python -m pytest -q --disable-warnings"
+  },
+  "dependency_versions": {
+    "pyspark": "4.2.0",
+    "duckdb": "2.0.0",
+    "pandas": "2.3.3",
+    "numpy": "2.5.4",
+    "pyarrow": "26.0.0",
+    "psutil": "7.2.2",
+    "scipy": "1.18.1",
+    "pytest": "9.2.0",
+    "requests": "2.34.2",
+    "tzdata": "2026.6",
+    "pywin32": "312"
   },
   "matrix_validation": {
     "status": "passed",
@@ -19,26 +32,26 @@
       {
         "scenario": "nightly",
         "policy": "P0",
-        "api_g": 856.71975,
-        "oracle_g": 856.71975
+        "api_g": 12332.717783871476,
+        "oracle_g": 12332.717783871476
       },
       {
         "scenario": "nightly",
         "policy": "P2",
-        "api_g": 792.2620000000001,
-        "oracle_g": 767.1537500000001
+        "api_g": 11879.685899621105,
+        "oracle_g": 11685.275471199842
       },
       {
         "scenario": "nightly",
         "policy": "P3",
-        "api_g": 792.54525,
-        "oracle_g": 766.6822500000001
+        "api_g": 11872.231642623323,
+        "oracle_g": 11635.40407114098
       },
       {
         "scenario": "nightly",
         "policy": "P4",
-        "api_g": 792.2620000000001,
-        "oracle_g": 767.1537500000001
+        "api_g": 11863.02529949697,
+        "oracle_g": 11597.38677739185
       },
       {
         "scenario": "wiesner_s1",
@@ -53,13 +66,29 @@
         "oracle_g": 374554.0
       }
     ],
-    "backtest_sha256": "b5454c0f944e0a73d0a03b3e505e6f969980d31cb0574e832ffba53740c06664"
+    "backtest_sha256": "224acefc832b95b8981cfec4008466a6322f340a669033be51fcbfd7647e4a83"
   },
-  "matrix_sizing": "synthetic placeholders; not measured nightly results",
+  "matrix_sizing": "measured attributable RAPL; SCALE and PUE in backtest_meta.json",
+  "measurement": {
+    "status": "complete",
+    "accepted_rows": 25,
+    "sessions": 2,
+    "excluded_whole_cohort_rows": 12,
+    "energy_cv_max": 0.07677399378537814,
+    "duration_cv_max": 0.03709865740987196,
+    "model_r2": 0.10584329605840093,
+    "protocol": "Three original passing cohorts and two fully conditioned retry cohorts; all earlier readings preserved."
+  },
   "live_dry_run": "passed",
   "offline_dry_run": "passed, labelled historical replay",
-  "physical_measurement_status": "blocked: AC disconnected during warmup; incomplete attempts archived",
-  "final_measured_backtest": "not available",
-  "measured_live_demo": "pending",
+  "measured_live_demo": {
+    "status": "executed",
+    "actual": {
+      "status": "pending_actual",
+      "emissions_g": null
+    }
+  },
+  "final_measured_backtest": "passed",
+  "previous_placeholder_validation": "results/validation_placeholder/; not the final numerical results",
   "frontend_changed": false
 }

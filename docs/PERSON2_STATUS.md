@@ -1,54 +1,70 @@
 # Person 2 status — 2026-11-04
 
-Implementation is ready; final physical measurement deliverables remain blocked.
-Do not describe this branch as a completed measurement campaign.
+Implementation, accepted RAPL measurements and measured-size backtesting are verified.
+The immediate measured demo ran successfully; its actual CI is awaiting API publication.
 
-## Verified
+## Verified deliverables
 
-- 49 Windows tests pass (184 upstream NumPy/pandas deprecation warnings).
-- All 99 SF5 queries timed; SF1 fallback documented after sustained heap failures.
-- P0/P2/P3/P4, UTC/UK DST scheduling, API/oracle/noisy forecasts, measured-size
-  loading, exact output contract, Wiesner scenario and independent auditor built.
-- Full 2024–2025 matrix generated 437,448 rows with zero deadline misses using
-  explicitly labelled placeholder job sizes. The independent audit passed every row: zero capacity/deadline violations,
-  conserved energy and correct actual-intensity accounting. Evidence:
-  `results/validation_placeholder/verification.json`.
-- Live and offline planning demos passed on 2026-11-04; their plans are retained
-  under `results/validation_placeholder/` and labelled by forecast source.
-- Frontend unchanged. Git commits contain no co-author trailers.
+- **50 Windows tests pass**, including no-lookahead, DST, capacity, energy accounting,
+  JSON export, RAPL and whole-cohort retry checks. There are 184 upstream
+  NumPy/pandas deprecation warnings, with no test failures.
+- **25 accepted real RAPL readings**, five per job. Every run exceeds 30 seconds;
+  duration and attributable-energy CV are below 10%. Energy CV spans 1.05–7.68%.
+- Three passing cohorts came from the original 27-run session. Two whole failed
+  cohorts were replaced by ten readings from a separately conditioned retry.
+  All twelve rejected rows and earlier interrupted attempts remain archived;
+  no individual outlier was silently removed. Each row retains its session idle.
+- **437,448 backtest rows / 157,512 plans** independently audited: zero deadline
+  misses, zero capacity violations, conserved energy and correct actual-CI
+  accounting. All required policies, capacities, forecast modes, seeds and
+  Wiesner windows were exercised over the 2024–2025 candidate dates. Missing
+  actual data and boundary skips are explicitly listed in metadata.
+- Live and offline dry-run plans passed using measured job sizes. The immediate
+  RAPL demo ran for 64.65 seconds and measured 2,733.21 gross package joules.
+  Forecast comparisons are explicitly counterfactual; actual grams are refreshed
+  only when the API publishes the measured interval.
+- Frontend unchanged. Commits use Sharvesh K's linked GitHub identity, with no
+  co-author trailers. README contributor credit links to @SharveshK1228.
 
-## Physical blocker and remaining acceptance
+## Final artifacts
 
-The 2026-11-04 campaign started on AC but stopped during warmup after the guard
-observed charger disconnection. The machine subsequently reported battery power.
-Prior interrupted attempts are preserved under `results/measurement_attempts/`.
-The 16-run session was explicitly paused before its closing idle baseline and
-remaining repeats; it cannot be presented as a complete campaign.
+- `results/measurements.csv`, `measurements_summary.csv`, `measurements_meta.json`
+- `results/power_model.json`; full measurement table in `notes/02_energy_measurement.md`
+- `results/backtest.parquet`, `backtest_meta.json`, `backtest_slots.parquet`
+- `results/verification.json`, `results/person2_validation.json`
+- `results/plans/plan_2026-10-27.json` (explicit offline historical replay)
+- `results/plans/plan_2026-11-04.json` (live plan and real measured demo)
 
-Remaining: R0d/R0e final idle-bookended campaign, five or more accepted runs per
-job, quality statistics and final measurement table; R5 measured fleet sizes;
-R6 measured-size backtest and audit; R15 immediate measured demo and eventual
-actual-intensity scoring. No measured savings or completed campaign is claimed.
-The placeholder nightly outputs are validation evidence, not final measurements.
+`results/validation_placeholder/` is retained only as earlier development evidence.
+The final backtest at the results root uses measured energy and durations,
+SCALE=32.63923280795001 and PUE=1.0. Fleet-scaled results are projections.
 
-## Resume commands
-
-Keep the charger connected and lid open. Select Windows Best performance.
-Run from the repository root using the already calibrated SF1 catalogue:
+## Reproduce processing from committed measurements
 
 ```powershell
-.venv\Scripts\python scripts\check_machine.py
-.venv\Scripts\python scripts\measure_jobs.py --sf 1 --cores 4 --driver-memory 8g --conditions-confirmed --room-conditions "Record actual conditions and unknowns"
+.venv\Scripts\python -m pytest -q --disable-warnings
 .venv\Scripts\python scripts\run_backtest.py
 .venv\Scripts\python scripts\verify_results.py
 .venv\Scripts\python scripts\run_scheduler.py --dry-run --offline
 .venv\Scripts\python scripts\run_scheduler.py --dry-run
-.venv\Scripts\python scripts\run_scheduler.py --now --job daily_sales_report
 ```
 
-After actual CI is published, use `scripts/score_demo.py` on the measured plan.
-Update `notes/02_energy_measurement.md` with the accepted measurement table and
-this status with final verification evidence. Measurements must never be silently
-substituted with model estimates or drawn from interrupted sessions.
+See `docs/PERSON2.md` for hardware measurement and retry commands. Use
+`scripts/score_demo.py results/plans/plan_2026-11-04.json` to refresh actual CI.
 
-Person 3 still owns Mac validation, report, website exports and submission.
+## Limitations and remaining team work
+
+SF1 was permitted after two sustained SF5 heap failures; all 99 SF5 query timings
+are retained. Room/cooling and background-app closure were unknown. Baseline
+drift and the documented conditioning retry limit cross-session comparability.
+The utilisation model has weak in-sample R²=0.1058 and is not a validated portable
+estimator; scheduling uses measured RAPL, not that model. RAPL covers CPU package
+energy, not wall-socket or whole-system consumption.
+
+Historical forecast files lack issue-time vintages; the code's no-lookahead
+checks do not prove historical publication times. The oracle is a heuristic
+perfect-information benchmark, not a guaranteed global optimum. The Wiesner
+scenario uses normalized 1 kWh and 2024–2025 data, not the paper's 2020 results.
+
+Person 3 owns Mac validation, report generation, website export and submission.
+Those tasks and optional P5/Airflow/battery cross-check are outside Person 2 scope.

@@ -213,8 +213,8 @@ The optional P5 ILP and unplugged battery cross-check are not required.
 | R8 independent checks | `scripts/verify_results.py`, `results/verification.json`, corruption detection in `tests/test_verification.py` |
 | R15 live/offline demo | `scripts/run_scheduler.py`, `scripts/score_demo.py`, saved plans; actual-versus-forecast accounting in `tests/test_demo.py` |
 
-The final campaign and full-result verification must pass before the numerical
-outputs are treated as final. Person 3's Mac test, report, website export and
+The assembled accepted cohorts and full measured-size result verification now
+pass their checks; the final numerical outputs are at the results root. Person 3's Mac test, report, website export and
 submission work remain separate from this Windows implementation.
 
 Current execution status and remaining measurement acceptance: [Person 2 status](PERSON2_STATUS.md).

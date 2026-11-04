@@ -1,0 +1,221 @@
+{
+  "night": "2026-11-04",
+  "release_utc": "2026-11-04T22:00:00+00:00",
+  "deadline_utc": "2026-11-05T07:00:00+00:00",
+  "capacity_k": 1,
+  "forecast": {
+    "source": "live",
+    "fetched_at_utc": "2026-11-04T16:18:08.395448+00:00"
+  },
+  "sizing": {
+    "source": "measurements",
+    "scale": 32.63923280795001,
+    "pue": 1.0,
+    "target_scale": 32.63923280795001,
+    "capacity_adjusted": false,
+    "energy_basis": "attributable CPU-package kWh",
+    "measurements": "C:\\Users\\sharv\\Documents\\Codex\\2026-10-31\\https-github-com-vismayhs-greenshift-https-2\\work\\GreenShift\\results\\measurements.csv",
+    "rounding": "ceil duration to 30 min; energy conserved"
+  },
+  "ci_at_22_local": 140.0,
+  "forecast_complete": true,
+  "jobs": [
+    {
+      "job": "daily_sales_report",
+      "start_utc": "2026-11-04T23:30:00+00:00",
+      "end_utc": "2026-11-05T00:30:00+00:00",
+      "occupied_slots": [
+        3,
+        4
+      ],
+      "baseline_slots": [
+        0,
+        1
+      ],
+      "baseline_start_utc": "2026-11-04T22:00:00+00:00",
+      "baseline_end_utc": "2026-11-04T23:00:00+00:00",
+      "forecast_ci": 110.0,
+      "baseline_ci": 132.5,
+      "expected_saving_pct": 16.9811320754717,
+      "energy_kwh": 0.009330430030096324,
+      "reason": "Lowest tested feasible window with an EDF completion check; retained cron if total forecast emissions would increase.",
+      "deadline_met": true
+    },
+    {
+      "job": "customer_analytics",
+      "start_utc": "2026-11-05T00:30:00+00:00",
+      "end_utc": "2026-11-05T01:30:00+00:00",
+      "occupied_slots": [
+        5,
+        6
+      ],
+      "baseline_slots": [
+        2,
+        3
+      ],
+      "baseline_start_utc": "2026-11-04T23:00:00+00:00",
+      "baseline_end_utc": "2026-11-05T00:00:00+00:00",
+      "forecast_ci": 103.5,
+      "baseline_ci": 110.5,
+      "expected_saving_pct": 6.334841628959276,
+      "energy_kwh": 0.010609574980497463,
+      "reason": "Lowest tested feasible window with an EDF completion check; retained cron if total forecast emissions would increase.",
+      "deadline_met": true
+    },
+    {
+      "job": "inventory_supply_chain",
+      "start_utc": "2026-11-05T01:30:00+00:00",
+      "end_utc": "2026-11-05T03:00:00+00:00",
+      "occupied_slots": [
+        7,
+        8,
+        9
+      ],
+      "baseline_slots": [
+        4,
+        5,
+        6
+      ],
+      "baseline_start_utc": "2026-11-05T00:00:00+00:00",
+      "baseline_end_utc": "2026-11-05T01:30:00+00:00",
+      "forecast_ci": 91.0,
+      "baseline_ci": 106.0,
+      "expected_saving_pct": 14.150943396226415,
+      "energy_kwh": 0.015525914318144747,
+      "reason": "Lowest tested feasible window with an EDF completion check; retained cron if total forecast emissions would increase.",
+      "deadline_met": true
+    },
+    {
+      "job": "cross_channel_promo",
+      "start_utc": "2026-11-05T03:00:00+00:00",
+      "end_utc": "2026-11-05T05:00:00+00:00",
+      "occupied_slots": [
+        10,
+        11,
+        12,
+        13
+      ],
+      "baseline_slots": [
+        7,
+        8,
+        9,
+        10
+      ],
+      "baseline_start_utc": "2026-11-05T01:30:00+00:00",
+      "baseline_end_utc": "2026-11-05T03:30:00+00:00",
+      "forecast_ci": 82.5,
+      "baseline_ci": 89.25,
+      "expected_saving_pct": 7.563025210084033,
+      "energy_kwh": 0.027369157816061963,
+      "reason": "Lowest tested feasible window with an EDF completion check; retained cron if total forecast emissions would increase.",
+      "deadline_met": true
+    },
+    {
+      "job": "returns_audit",
+      "start_utc": "2026-11-05T05:00:00+00:00",
+      "end_utc": "2026-11-05T06:30:00+00:00",
+      "occupied_slots": [
+        14,
+        15,
+        16
+      ],
+      "baseline_slots": [
+        11,
+        12,
+        13
+      ],
+      "baseline_start_utc": "2026-11-05T03:30:00+00:00",
+      "baseline_end_utc": "2026-11-05T05:00:00+00:00",
+      "forecast_ci": 100.33333333333333,
+      "baseline_ci": 82.0,
+      "expected_saving_pct": -22.357723577235767,
+      "energy_kwh": 0.011359956460921103,
+      "reason": "Lowest tested feasible window with an EDF completion check; retained cron if total forecast emissions would increase.",
+      "deadline_met": true
+    }
+  ],
+  "execution": "planning only; no dispatch or waiting",
+  "comparison": "forecast-based expectation, not measured avoided emissions",
+  "historical_replay": false,
+  "created_at_utc": "2026-11-04T16:18:08.397660+00:00",
+  "measured_demo": {
+    "run": {
+      "label": "daily_sales_report",
+      "start_unix": 1793809104.3605201,
+      "duration_s": 64.64622521400452,
+      "rapl_pkg_j": 2733.2057719979784,
+      "rapl_cores_j": 2195.9657790012134,
+      "battery_j": null,
+      "model_j": 1136.004061109185,
+      "mean_cpu_util": 0.27616165620466776,
+      "idle_w": 6.822687400826047,
+      "best_j": 2733.2057719979784,
+      "attributable_j": 2292.1447857194266,
+      "kwh": 0.000759223825554994,
+      "gross_kwh": 0.000759223825554994,
+      "attributable_kwh": 0.0006367068849220629,
+      "energy_source": "rapl",
+      "job": "daily_sales_report",
+      "queries": [
+        3,
+        7,
+        19,
+        42,
+        52,
+        55
+      ],
+      "executor_cpu_s": 64.703125,
+      "executor_run_s": 103.119,
+      "spark_inputBytes": 150545700,
+      "spark_shuffleReadBytes": 11448000,
+      "spark_shuffleWriteBytes": 11448000,
+      "spark_numCompleteTasks": 1692,
+      "spark_memoryBytesSpilled": 0,
+      "spark_diskBytesSpilled": 0,
+      "spark_numStages": 1044
+    },
+    "machine": {
+      "recorded_at_utc": "2026-11-04T16:18:08.401021+00:00",
+      "os": "Windows-11-10.0.26300-SP0",
+      "cpu": "13th Gen Intel(R) Core(TM) i5-13450HX",
+      "ram_bytes": 25463480320,
+      "available_ram_bytes": 12337045504,
+      "logical_cpus": 16,
+      "python": "3.12.4",
+      "room_conditions": "unknown; not supplied",
+      "background_apps": "not automatically closed; operator must confirm",
+      "ac_power": true,
+      "power_scheme": "Power Scheme GUID: 381b4222-f694-41f0-9685-ff5bb260df2e  (Balanced)",
+      "power_mode_guid": "961cc777-2547-4f9d-8174-7d86181b8a7a",
+      "selected_ac_power_mode_guid": "ded574b5-45a0-4f42-8737-46345c09c238",
+      "power_mode_source": "selected AC overlay plus OEM effective overlay",
+      "java": "C:\\Program Files\\Common Files\\Oracle\\Java\\javapath\\java.EXE",
+      "spark_jdk": "C:\\Users\\sharv\\Documents\\Codex\\2026-10-31\\https-github-com-vismayhs-greenshift-https-2\\work\\GreenShift\\.tools\\jdk-21.0.13+9",
+      "versions": {
+        "pyspark": "4.2.0",
+        "duckdb": "2.0.0",
+        "pandas": "2.3.3",
+        "numpy": "2.5.4",
+        "psutil": "7.2.2",
+        "pyarrow": "26.0.0"
+      },
+      "sensor": "RaplWindows",
+      "rapl_initial_j": {
+        "PKG": 313193.8863049968,
+        "PP0": 175115.7093129984,
+        "PP1": 621.8900589996,
+        "DRAM": 0.0
+      },
+      "measurement_ready": true
+    },
+    "actual": {
+      "status": "pending_actual",
+      "emissions_g": null
+    },
+    "energy_basis": "attributable",
+    "current_forecast_g": 0.1254312563296464,
+    "planned_forecast_g": 0.07003775734142692,
+    "comparison": "same measured laptop energy at current/planned forecast CI; counterfactual, not actual avoided emissions",
+    "actual_checked_at_utc": "2026-11-04T16:24:37.329292+00:00"
+  }
+}

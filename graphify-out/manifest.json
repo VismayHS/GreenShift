@@ -138,9 +138,9 @@
     "semantic_hash": ""
   },
   "notes/02_energy_measurement.md": {
-    "mtime": 1793781476.2331746,
-    "seen": 1793800996.4827216,
-    "ast_hash": "38164f638de8b746c57618961e9145c8",
+    "mtime": 1793809213.1307292,
+    "seen": 1793809240.4447627,
+    "ast_hash": "00c874c89f591bd49c51f15f599dd08e",
     "semantic_hash": ""
   },
   "notes/04_workloads_tpcds.md": {
@@ -510,9 +510,9 @@
     "semantic_hash": ""
   },
   "src/carbonsched/scheduler/sizing.py": {
-    "mtime": 1793647225.7418814,
-    "seen": 1793697547.4380145,
-    "ast_hash": "244735981f985c587e2d14fe13a8e6ef",
+    "mtime": 1793809079.9185712,
+    "seen": 1793809240.4447627,
+    "ast_hash": "43d76aec698c455214f3d036cf7afcff",
     "semantic_hash": ""
   },
   "src/carbonsched/scheduler/verification.py": {
@@ -582,9 +582,9 @@
     "semantic_hash": ""
   },
   "tests/test_sizing.py": {
-    "mtime": 1793647225.7428792,
-    "seen": 1793697547.4380145,
-    "ast_hash": "d92e646bf68bf4cbb9714fb4ef7845c3",
+    "mtime": 1793809079.9197893,
+    "seen": 1793809240.4447627,
+    "ast_hash": "c64ad5952eec4dec864a080fdc9a941b",
     "semantic_hash": ""
   },
   "tests/test_verification.py": {
@@ -684,9 +684,9 @@
     "semantic_hash": ""
   },
   "results/measurement_attempts/2026-11-04-conditioned-retry/measurements_meta.json": {
-    "mtime": 1793800912.1118286,
-    "seen": 1793800996.4827216,
-    "ast_hash": "0c4db76a21a668872685f3da3ab582b5",
+    "mtime": 1793804148.4752982,
+    "seen": 1793809240.4447627,
+    "ast_hash": "e8d6f08e0b3ca9ae7f2795ff9897db4f",
     "semantic_hash": ""
   },
   "results/measurement_attempts/2026-11-04-initial-quality/measurements_meta.json": {
@@ -741,6 +741,36 @@
     "mtime": 1793781600.5748181,
     "seen": 1793800996.4827216,
     "ast_hash": "47b10608494c79f52d24d51de524e810",
+    "semantic_hash": ""
+  },
+  "results/measurement_attempts/2026-11-04-conditioned-retry/power_model.json": {
+    "mtime": 1793804148.4738407,
+    "seen": 1793809240.4447627,
+    "ast_hash": "5244b57c243aef66485013b640475fb2",
+    "semantic_hash": ""
+  },
+  "results/measurements_meta.json": {
+    "mtime": 1793804151.2400985,
+    "seen": 1793809240.4447627,
+    "ast_hash": "7f78b2078de97d807c414c40f2f4eb59",
+    "semantic_hash": ""
+  },
+  "results/plans/plan_2026-10-27.json": {
+    "mtime": 1793809083.6570976,
+    "seen": 1793809240.4447627,
+    "ast_hash": "3e8f38ee6f2308880f93c00040a49c53",
+    "semantic_hash": ""
+  },
+  "results/plans/plan_2026-11-04.json": {
+    "mtime": 1793809171.2319613,
+    "seen": 1793809240.4447627,
+    "ast_hash": "5b9f5d6122236193e03d0dde3301fe88",
+    "semantic_hash": ""
+  },
+  "results/power_model.json": {
+    "mtime": 1793804151.2464006,
+    "seen": 1793809240.4447627,
+    "ast_hash": "ecfb8eb77564d3e20284094f9f2547ff",
     "semantic_hash": ""
   },
   "frontend/package-lock.json": {

@@ -1,0 +1,142 @@
+{
+  "night": "2026-10-27",
+  "release_utc": "2026-10-27T22:00:00+00:00",
+  "deadline_utc": "2026-10-28T07:00:00+00:00",
+  "capacity_k": 1,
+  "forecast": {
+    "source": "stored_fallback",
+    "fetched_at_utc": "2026-10-27T06:24Z",
+    "fallback_reason": "offline requested"
+  },
+  "sizing": {
+    "source": "measurements",
+    "scale": 32.63923280795001,
+    "pue": 1.0,
+    "target_scale": 32.63923280795001,
+    "capacity_adjusted": false,
+    "energy_basis": "attributable CPU-package kWh",
+    "measurements": "C:\\Users\\sharv\\Documents\\Codex\\2026-10-31\\https-github-com-vismayhs-greenshift-https-2\\work\\GreenShift\\results\\measurements.csv",
+    "rounding": "ceil duration to 30 min; energy conserved"
+  },
+  "ci_at_22_local": 55.0,
+  "forecast_complete": true,
+  "jobs": [
+    {
+      "job": "daily_sales_report",
+      "start_utc": "2026-10-28T05:30:00+00:00",
+      "end_utc": "2026-10-28T06:30:00+00:00",
+      "occupied_slots": [
+        15,
+        16
+      ],
+      "baseline_slots": [
+        0,
+        1
+      ],
+      "baseline_start_utc": "2026-10-27T22:00:00+00:00",
+      "baseline_end_utc": "2026-10-27T23:00:00+00:00",
+      "forecast_ci": 52.5,
+      "baseline_ci": 53.5,
+      "expected_saving_pct": 1.8691588785046727,
+      "energy_kwh": 0.009330430030096324,
+      "reason": "Lowest tested feasible window with an EDF completion check; retained cron if total forecast emissions would increase.",
+      "deadline_met": true
+    },
+    {
+      "job": "customer_analytics",
+      "start_utc": "2026-10-27T23:00:00+00:00",
+      "end_utc": "2026-10-28T00:00:00+00:00",
+      "occupied_slots": [
+        2,
+        3
+      ],
+      "baseline_slots": [
+        2,
+        3
+      ],
+      "baseline_start_utc": "2026-10-27T23:00:00+00:00",
+      "baseline_end_utc": "2026-10-28T00:00:00+00:00",
+      "forecast_ci": 50.5,
+      "baseline_ci": 50.5,
+      "expected_saving_pct": 0.0,
+      "energy_kwh": 0.010609574980497463,
+      "reason": "Lowest tested feasible window with an EDF completion check; retained cron if total forecast emissions would increase.",
+      "deadline_met": true
+    },
+    {
+      "job": "inventory_supply_chain",
+      "start_utc": "2026-10-28T00:00:00+00:00",
+      "end_utc": "2026-10-28T01:30:00+00:00",
+      "occupied_slots": [
+        4,
+        5,
+        6
+      ],
+      "baseline_slots": [
+        4,
+        5,
+        6
+      ],
+      "baseline_start_utc": "2026-10-28T00:00:00+00:00",
+      "baseline_end_utc": "2026-10-28T01:30:00+00:00",
+      "forecast_ci": 47.0,
+      "baseline_ci": 47.0,
+      "expected_saving_pct": 0.0,
+      "energy_kwh": 0.015525914318144747,
+      "reason": "Lowest tested feasible window with an EDF completion check; retained cron if total forecast emissions would increase.",
+      "deadline_met": true
+    },
+    {
+      "job": "cross_channel_promo",
+      "start_utc": "2026-10-28T02:00:00+00:00",
+      "end_utc": "2026-10-28T04:00:00+00:00",
+      "occupied_slots": [
+        8,
+        9,
+        10,
+        11
+      ],
+      "baseline_slots": [
+        7,
+        8,
+        9,
+        10
+      ],
+      "baseline_start_utc": "2026-10-28T01:30:00+00:00",
+      "baseline_end_utc": "2026-10-28T03:30:00+00:00",
+      "forecast_ci": 47.0,
+      "baseline_ci": 47.25,
+      "expected_saving_pct": 0.5291005291005291,
+      "energy_kwh": 0.027369157816061963,
+      "reason": "Lowest tested feasible window with an EDF completion check; retained cron if total forecast emissions would increase.",
+      "deadline_met": true
+    },
+    {
+      "job": "returns_audit",
+      "start_utc": "2026-10-28T04:00:00+00:00",
+      "end_utc": "2026-10-28T05:30:00+00:00",
+      "occupied_slots": [
+        12,
+        13,
+        14
+      ],
+      "baseline_slots": [
+        11,
+        12,
+        13
+      ],
+      "baseline_start_utc": "2026-10-28T03:30:00+00:00",
+      "baseline_end_utc": "2026-10-28T05:00:00+00:00",
+      "forecast_ci": 50.0,
+      "baseline_ci": 48.666666666666664,
+      "expected_saving_pct": -2.7397260273972655,
+      "energy_kwh": 0.011359956460921103,
+      "reason": "Lowest tested feasible window with an EDF completion check; retained cron if total forecast emissions would increase.",
+      "deadline_met": true
+    }
+  ],
+  "execution": "planning only; no dispatch or waiting",
+  "comparison": "forecast-based expectation, not measured avoided emissions",
+  "historical_replay": true,
+  "created_at_utc": "2026-11-04T16:18:03.655589+00:00"
+}

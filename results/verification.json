@@ -1,0 +1,48 @@
+{
+  "status": "passed",
+  "rows": 437448,
+  "plans": 157512,
+  "deadline_misses": 0,
+  "capacity_violations": 0,
+  "actual_accounting_rows_checked": 437448,
+  "energy_conserved": true,
+  "oracle_vs_api": [
+    {
+      "scenario": "nightly",
+      "policy": "P0",
+      "api_g": 12332.717783871476,
+      "oracle_g": 12332.717783871476
+    },
+    {
+      "scenario": "nightly",
+      "policy": "P2",
+      "api_g": 11879.685899621105,
+      "oracle_g": 11685.275471199842
+    },
+    {
+      "scenario": "nightly",
+      "policy": "P3",
+      "api_g": 11872.231642623323,
+      "oracle_g": 11635.40407114098
+    },
+    {
+      "scenario": "nightly",
+      "policy": "P4",
+      "api_g": 11863.02529949697,
+      "oracle_g": 11597.38677739185
+    },
+    {
+      "scenario": "wiesner_s1",
+      "policy": "P0",
+      "api_g": 401469.0,
+      "oracle_g": 401469.0
+    },
+    {
+      "scenario": "wiesner_s1",
+      "policy": "P2",
+      "api_g": 391690.0,
+      "oracle_g": 374554.0
+    }
+  ],
+  "backtest_sha256": "224acefc832b95b8981cfec4008466a6322f340a669033be51fcbfd7647e4a83"
+}

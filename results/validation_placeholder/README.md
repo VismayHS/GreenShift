@@ -17,5 +17,6 @@ Reproduce from the repository root while no final measurements.csv exists:
 ```
 
 Live and offline dry-run plans are retained in their named subdirectories.
-A completed RAPL campaign and measured-size backtest remain required for final
-Person 2 numerical deliverables; see docs/PERSON2_STATUS.md.
+Final qualified RAPL measurements and the measured-size backtest are now at the
+results root. This directory remains earlier validation evidence only; see
+`docs/PERSON2_STATUS.md`.
