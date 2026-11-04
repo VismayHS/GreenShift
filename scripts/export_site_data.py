@@ -1,7 +1,12 @@
 """Export the pipeline's results as JSON for the frontend (frontend/public/data/).
 
-Only sourced numbers are written. Results that do not exist yet (backtest
-savings, SF5 job energy) are exported as null so the site shows them as pending.
+Only sourced numbers are written. Results that do not exist yet (measured job
+energy) are exported as null so the site shows them as pending.
+
+results.json   = results/report_summary.json (scripts/build_report.py), so the site
+                 and report/results_tables.md always show the same numbers.
+python_plan.json = newest plan from scripts/run_scheduler.py, the reference the
+                 site's TypeScript planner is checked against.
 
 Usage:
     python scripts/export_site_data.py            # also refreshes the stored 48 h forecast
@@ -80,12 +85,37 @@ def forecast(offline: bool) -> dict | None:
     return obj
 
 
+def attempts() -> list[dict]:
+    """Every preserved measurement session, with why it is not a final campaign."""
+    out = []
+    for folder in sorted((RESULTS_DIR / "measurement_attempts").glob("*")):
+        meta_p = folder / "measurements_meta.json"
+        if not meta_p.exists():
+            continue
+        meta = json.loads(meta_p.read_text())
+        csv = folder / "measurements.csv"
+        runs = pd.read_csv(csv) if csv.exists() else pd.DataFrame()
+        reason = next((meta[k] for k in ("pause_note", "failure", "exclusion_note", "stop_reason", "reason", "note") if meta.get(k)), None)
+        out.append({"id": folder.name, "status": meta.get("status", "unknown"),
+                    "recorded_at_utc": meta.get("recorded_at_utc"), "cpu": meta.get("cpu"),
+                    "scale_factor": meta.get("scale_factor"), "runs": int(len(runs)),
+                    "jobs_covered": int(runs["job"].nunique()) if "job" in runs else 0,
+                    "reason": reason})
+    return out
+
+
 def energy() -> dict:
     """Energy-meter validation (HANDOFF §6 and §2) and SF1 query timings."""
     times = json.loads((RESULTS_DIR / "tpcds_sf1_linux_times.json").read_text())
     jobs = json.loads((PROJECT_ROOT / "configs" / "jobs.json").read_text())
     q = {int(k): v for k, v in times["query_seconds"].items()}
+    final = RESULTS_DIR / "measurements_summary.csv"
+    measured = pd.read_csv(final).to_dict("records") if final.exists() else None
+    machine = RESULTS_DIR / "machine_check.json"
     return {
+        "campaign": {"complete": measured is not None, "summary": measured,
+                     "attempts": attempts(),
+                     "machine": json.loads(machine.read_text()) if machine.exists() else None},
         "validation": [
             {"machine": "Windows 11", "test": "CPU burn, 2 procs", "duration_s": 5.6, "rapl_j": 88.0, "model_j": 92.5, "util": 0.34},
             {"machine": "Windows 11", "test": "CPU burn, 6 procs", "duration_s": 2.7, "rapl_j": 64.2, "model_j": 65.4, "util": 0.62},
@@ -97,8 +127,11 @@ def energy() -> dict:
         "cpu": "Intel Core i5-12450H (8 cores, 12 threads)",
         "tpcds_sf1": {"machine": times["machine"], "date": times["date"], "query_seconds": q,
                       "note": times["note"]},
-        "jobs": [{**j, "sf1_seconds": round(sum(q[n] for n in j["queries"]), 1),
+        "jobs": [{"name": j["name"], "queries": j["queries"], "character": j["character"],
+                  "interruptible": j["interruptible"], "repeats": j.get("repeats", 1),
+                  "sf1_seconds": round(sum(q[n] for n in j["queries"]), 1),
                   "energy_kwh": None} for j in jobs["jobs"]],
+        "scale_factor": jobs.get("scale_factor"),
         "window": jobs["window"],
     }
 
@@ -115,7 +148,14 @@ def main() -> None:
     _write("regions.json", regions(regs, nat))
     _write("eda.json", json.loads((RESULTS_DIR / "eda_carbon_summary.json").read_text()))
     _write("energy.json", energy())
-    _write("results.json", {"backtest": None, "note": "Backtest not run yet (HANDOFF §8 step 8)."})
+    summary = RESULTS_DIR / "report_summary.json"
+    if summary.exists():
+        _write("results.json", json.loads(summary.read_text()))
+    else:
+        _write("results.json", {"status": "not_run", "note": "Run scripts/build_report.py first."})
+    plans = sorted((RESULTS_DIR / "plans").glob("plan_*.json"), key=lambda p: p.stat().st_mtime)
+    if plans:
+        _write("python_plan.json", json.loads(plans[-1].read_text()))
     try:
         forecast(args.offline)
     except requests.RequestException as e:
