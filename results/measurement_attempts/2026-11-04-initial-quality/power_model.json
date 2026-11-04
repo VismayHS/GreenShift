@@ -1,0 +1,12 @@
+{
+  "p_idle_w": 11.309099468787348,
+  "p_max_w": 42.9722275003849,
+  "r2": 0.6681391545013701,
+  "n": 27,
+  "fit": "run-average RAPL package watts versus time-weighted CPU utilisation",
+  "scope": "CPU package only; set memory_gb=0 and pue=1 for comparison",
+  "physical_coefficients": true,
+  "memory_gb": 0,
+  "pue": 1,
+  "note": "Fitted on this campaign; in-sample R2, not held-out validation."
+}

@@ -1,0 +1,42 @@
+WARNING: Using incubator modules: jdk.incubator.vector
+26/11/04 17:57:45 WARN Shell: Did not find winutils.exe: java.io.FileNotFoundException: java.io.FileNotFoundException: HADOOP_HOME and hadoop.home.dir are unset. -see https://cwiki.apache.org/confluence/display/HADOOP2/WindowsProblems
+Using Spark's default log4j profile: org/apache/spark/log4j2-defaults.properties
+Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
+26/11/04 17:57:45 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+26/11/04 17:57:51 WARN SparkStringUtils: Truncated the string representation of a plan since it was too large. This behavior can be adjusted by setting 'spark.sql.debug.maxToStringFields'.
+idle_start: 60 seconds
+Warmup daily_sales_report
+Warmup customer_analytics
+Warmup inventory_supply_chain
+Warmup cross_channel_promo
+Warmup returns_audit
+cross_channel_promo run 1: 228.0s, 6936.1 J
+daily_sales_report run 1: 93.9s, 2384.7 J
+cross_channel_promo run 2: 235.8s, 5412.4 J
+daily_sales_report run 2: 91.1s, 1684.7 J
+cross_channel_promo run 3: 226.7s, 4624.3 J
+inventory_supply_chain run 1: 145.5s, 3074.1 J
+returns_audit run 1: 128.1s, 2464.4 J
+cross_channel_promo run 4: 220.0s, 4447.8 J
+returns_audit run 2: 126.7s, 2481.3 J
+daily_sales_report run 3: 95.0s, 1645.9 J
+customer_analytics run 1: 113.2s, 2261.4 J
+returns_audit run 3: 124.5s, 2422.5 J
+returns_audit run 4: 122.4s, 2356.5 J
+customer_analytics run 2: 110.7s, 2190.7 J
+daily_sales_report run 4: 98.7s, 1736.0 J
+inventory_supply_chain run 2: 147.4s, 3136.6 J
+daily_sales_report run 5: 98.2s, 1746.3 J
+cross_channel_promo run 5: 228.2s, 4565.8 J
+customer_analytics run 3: 111.1s, 2346.2 J
+customer_analytics run 4: 105.8s, 2110.1 J
+customer_analytics run 5: 109.2s, 2092.4 J
+inventory_supply_chain run 3: 150.6s, 3108.3 J
+inventory_supply_chain run 4: 143.6s, 3113.7 J
+inventory_supply_chain run 5: 143.4s, 2969.8 J
+returns_audit run 5: 124.8s, 2405.3 J
+idle_end: 60 seconds
+daily_sales_report run 6: 102.2s, 1793.9 J
+cross_channel_promo run 6: 228.3s, 4630.0 J
+idle_end: 60 seconds

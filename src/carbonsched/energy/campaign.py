@@ -12,6 +12,45 @@ METRICS = ["duration_s", "rapl_pkg_j", "rapl_cores_j", "attributable_j",
            "spark_inputBytes", "spark_shuffleReadBytes", "spark_shuffleWriteBytes"]
 
 
+def combine_qualified_cohorts(sessions: list[tuple[str, pd.DataFrame, dict]], jobs: list[dict]):
+    """Accept whole passing job cohorts, never remove individual outlier rows."""
+    if not sessions:
+        raise ValueError("at least one session is required")
+    selected, excluded, frames = {}, [], []
+    reference = sessions[0][2]
+    expected = {job["name"]: job for job in jobs}
+    for session_id, frame, meta in sessions:
+        if meta.get("status") not in {"complete", "quality_failed"}:
+            raise ValueError("session must have completed its idle-bookended quality assessment")
+        if not all(key in meta for key in ("idle_start_w", "idle_end_w", "idle_used_w")):
+            raise ValueError("both idle bookends are required")
+        for key in ("cpu", "scale_factor", "cores", "driver_memory"):
+            if meta.get(key) != reference.get(key):
+                raise ValueError(f"incompatible sessions: {key}")
+        if set(frame.energy_source) != {"rapl"}:
+            raise ValueError("only measured RAPL cohorts are accepted")
+        if not np.isfinite(frame[["duration_s", "rapl_pkg_j", "attributable_j"]]).all().all():
+            raise ValueError("measurement values must be finite")
+        for row in summarize(frame).itertuples(index=False):
+            group = frame.loc[frame.job == row.job].copy()
+            if row.job not in expected:
+                raise ValueError("unknown measured workload")
+            if not (group.repeats == expected[row.job].get("repeats", 1)).all():
+                raise ValueError("catalogue repetitions differ from measured workload")
+            if not row.quality_pass:
+                excluded.append({"session": session_id, "job": row.job, "n": row.n,
+                                 "reason": "whole cohort failed the predefined quality gate"})
+                continue
+            if row.job in selected:
+                raise ValueError("multiple passing cohorts; selection must not depend on energy")
+            selected[row.job] = session_id
+            group["measurement_session"] = session_id
+            frames.append(group)
+    if set(selected) != set(expected):
+        raise ValueError(f"missing passing cohorts: {sorted(set(expected) - set(selected))}")
+    return pd.concat(frames, ignore_index=True), selected, excluded
+
+
 def summarize(records: pd.DataFrame) -> pd.DataFrame:
     rows = []
     for job, group in records.groupby("job", sort=False):

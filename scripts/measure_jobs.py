@@ -28,12 +28,18 @@ def main(guard):
     parser.add_argument("--driver-memory", default="8g")
     parser.add_argument("--seed", type=int, default=20261031)
     parser.add_argument("--max-runs", type=int, default=15)
+    parser.add_argument("--output", type=Path, default=RESULTS_DIR)
+    parser.add_argument("--jobs", nargs="+", help="retry complete workload cohorts by name")
+    parser.add_argument("--conditioning-rounds", type=int, default=0,
+                        help="discarded full-batch passes before the idle-bookended session")
     parser.add_argument("--room-conditions", default="unknown; not supplied")
     parser.add_argument("--conditions-confirmed", action="store_true",
                         help="Operator authorizes the session with known and unknown conditions recorded")
     args = parser.parse_args()
     if not args.conditions_confirmed:
         parser.error("Confirm physical measurement conditions with --conditions-confirmed")
+    if args.conditioning_rounds < 0:
+        parser.error("--conditioning-rounds must be nonnegative")
     if args.max_runs < 5:
         parser.error("--max-runs must be at least 5")
     config = json.loads((PROJECT_ROOT / "configs/jobs.json").read_text())
@@ -46,12 +52,18 @@ def main(guard):
                 driver_memory=args.driver_memory, operator_session_authorized=True,
                 git_commit=subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=PROJECT_ROOT, text=True).strip(),
                 status="in_progress", extra_runs=[], energy_basis="attributable CPU-package kWh")
-    RESULTS_DIR.mkdir(exist_ok=True)
-    meta_path = RESULTS_DIR / "measurements_meta.json"
-    raw_path = RESULTS_DIR / "measurements.csv"
+    args.output.mkdir(parents=True, exist_ok=True)
+    meta_path = args.output / "measurements_meta.json"
+    raw_path = args.output / "measurements.csv"
     if raw_path.exists():
         parser.error("measurements.csv already exists; archive it before a new session")
     jobs = config["jobs"]
+    if args.jobs:
+        unknown = set(args.jobs) - {j["name"] for j in jobs}
+        if unknown:
+            parser.error(f"unknown jobs: {sorted(unknown)}")
+        jobs = [j for j in jobs if j["name"] in args.jobs]
+    info.update(selected_jobs=[j["name"] for j in jobs], conditioning_rounds=args.conditioning_rounds)
     records = []
     rng = random.Random(args.seed)
 
@@ -60,6 +72,7 @@ def main(guard):
 
     def idle(label):
         guard.check()
+        info[f"{label}_started_at_utc"] = datetime.now(timezone.utc).isoformat()
         print(f"{label}: 60 seconds", flush=True)
         with EnergyMeter(label, interval_s=1) as meter:
             time.sleep(60)
@@ -73,7 +86,18 @@ def main(guard):
     spark = spark_session("measurement-campaign", cores=args.cores, driver_memory=args.driver_memory)
     try:
         register_tpcds(spark, f"sf{args.sf}")
+        for conditioning_round in range(args.conditioning_rounds):
+            conditioning_jobs = list(jobs)
+            rng.shuffle(conditioning_jobs)
+            for job in conditioning_jobs:
+                guard.check()
+                print(f"Conditioning {conditioning_round + 1}/{args.conditioning_rounds}: {job['name']}", flush=True)
+                run_job(spark, job["name"], job["queries"], repeats=job.get("repeats", 1))
+                guard.check()
+        if args.conditioning_rounds:
+            time.sleep(20)
         info["idle_start_w"] = idle("idle_start")
+        save_meta()
         for job in jobs:
             guard.check()
             print(f"Warmup {job['name']}", flush=True)
@@ -85,6 +109,7 @@ def main(guard):
             for job in queue:
                 time.sleep(20)
                 guard.check()
+                print(f"Measuring {job['name']}", flush=True)
                 record = run_job(spark, job["name"], job["queries"],
                                  idle_w=info["idle_start_w"], repeats=job.get("repeats", 1))
                 guard.check()
@@ -104,13 +129,13 @@ def main(guard):
             frame = subtract_idle(pd.DataFrame(records), avg_idle)
             summary = summarize(frame)
             frame.to_csv(raw_path, index=False)
-            summary.to_csv(RESULTS_DIR / "measurements_summary.csv", index=False)
+            summary.to_csv(args.output / "measurements_summary.csv", index=False)
             info["calibration"] = fit_model(frame)
             calibration = info["calibration"]
             frame["calibrated_model_j"] = (calibration["p_idle_w"] +
                 (calibration["p_max_w"] - calibration["p_idle_w"]) * frame.mean_cpu_util) * frame.duration_s
             frame.to_csv(raw_path, index=False)
-            (RESULTS_DIR / "power_model.json").write_text(json.dumps(
+            (args.output / "power_model.json").write_text(json.dumps(
                 {**calibration, "memory_gb": 0, "pue": 1,
                  "note": "Fitted on this campaign; in-sample R2, not held-out validation."},
                 indent=2), encoding="utf-8")
