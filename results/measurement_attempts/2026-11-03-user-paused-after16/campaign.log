@@ -1,0 +1,29 @@
+WARNING: Using incubator modules: jdk.incubator.vector
+26/11/03 21:43:16 WARN Shell: Did not find winutils.exe: java.io.FileNotFoundException: java.io.FileNotFoundException: HADOOP_HOME and hadoop.home.dir are unset. -see https://cwiki.apache.org/confluence/display/HADOOP2/WindowsProblems
+Using Spark's default log4j profile: org/apache/spark/log4j2-defaults.properties
+Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
+26/11/03 21:43:17 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+26/11/03 21:43:29 WARN SparkStringUtils: Truncated the string representation of a plan since it was too large. This behavior can be adjusted by setting 'spark.sql.debug.maxToStringFields'.
+idle_start: 60 seconds
+Warmup daily_sales_report
+Warmup customer_analytics
+Warmup inventory_supply_chain
+Warmup cross_channel_promo
+Warmup returns_audit
+cross_channel_promo run 1: 280.3s, 4827.2 J
+daily_sales_report run 1: 124.8s, 2013.7 J
+cross_channel_promo run 2: 233.3s, 4898.2 J
+daily_sales_report run 2: 90.4s, 1736.3 J
+cross_channel_promo run 3: 246.3s, 4588.5 J
+inventory_supply_chain run 1: 185.4s, 3095.9 J
+returns_audit run 1: 167.7s, 3420.6 J
+cross_channel_promo run 4: 284.6s, 5198.6 J
+returns_audit run 2: 182.6s, 2796.3 J
+daily_sales_report run 3: 146.2s, 2131.0 J
+customer_analytics run 1: 120.3s, 2055.1 J
+returns_audit run 3: 153.4s, 2442.0 J
+returns_audit run 4: 134.6s, 2577.3 J
+customer_analytics run 2: 128.0s, 2779.2 J
+daily_sales_report run 4: 123.8s, 2489.4 J
+inventory_supply_chain run 2: 185.2s, 5085.3 J
