@@ -57,3 +57,5 @@ The story page explains the method with our own data; the Tonight view plans the
 | Electricity Maps (optional) | ODbL / non-commercial API | [datacards/electricity_maps.md](datacards/electricity_maps.md) |
 
 Workload derived from TPC-DS; results are not comparable with published TPC-DS results.
+
+Current execution status and remaining measurement acceptance: [Person 2 status](docs/PERSON2_STATUS.md).

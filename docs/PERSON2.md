@@ -216,3 +216,5 @@ The optional P5 ILP and unplugged battery cross-check are not required.
 The final campaign and full-result verification must pass before the numerical
 outputs are treated as final. Person 3's Mac test, report, website export and
 submission work remain separate from this Windows implementation.
+
+Current execution status and remaining measurement acceptance: [Person 2 status](PERSON2_STATUS.md).
