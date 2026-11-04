@@ -59,3 +59,9 @@ The story page explains the method with our own data; the Tonight view plans the
 Workload derived from TPC-DS; results are not comparable with published TPC-DS results.
 
 Current execution status and remaining measurement acceptance: [Person 2 status](docs/PERSON2_STATUS.md).
+
+## Contributors
+
+- [Sharvesh K (@SharveshK1228)](https://github.com/SharveshK1228) — Person 2:
+  Spark workload and measurement tooling, RAPL safeguards, scheduling policies,
+  backtest simulation, tests, and live/offline demo commands.
