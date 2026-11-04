@@ -218,3 +218,32 @@ outputs are treated as final. Person 3's Mac test, report, website export and
 submission work remain separate from this Windows implementation.
 
 Current execution status and remaining measurement acceptance: [Person 2 status](PERSON2_STATUS.md).
+
+## Retrying a workload that fails the quality gate
+
+The 2026-11-04 uninterrupted session completed all 25 initial runs and one extra
+run for each of two failing workloads, with idle bookends preserved. Inventory,
+returns and customer analytics passed. Daily sales and cross-channel energy CVs
+remained about 31–32%, although timings were stable. The entire initial session
+is retained under `results/measurement_attempts/2026-11-04-initial-quality/`.
+
+A targeted retry uses three full conditioning passes before its start idle
+baseline, then the required one warmup per selected job and five randomized
+measured repeats with cooldowns. Conditioning is excluded from measurement
+statistics and recorded in metadata. This tests whether a longer preparation
+period improves stability; it does not establish the cause of the earlier
+variation. It is a separate session with its own idle bookends.
+
+```powershell
+.venv\Scripts\python scripts\measure_jobs.py --sf 1 --cores 4 --driver-memory 8g --jobs daily_sales_report cross_channel_promo --conditioning-rounds 3 --output results/measurement_attempts/2026-11-04-conditioned-retry --conditions-confirmed --room-conditions "Record actual conditions"
+.venv\Scripts\python scripts\assemble_measurements.py --sessions results/measurement_attempts/2026-11-04-initial-quality results/measurement_attempts/2026-11-04-conditioned-retry
+```
+
+Assembly requires one complete passing cohort for every job, matching machine,
+scale factor, worker count and heap. Every row of each accepted cohort is kept;
+no individual outlier is removed. Whole failed cohorts remain archived, and
+multiple passing candidates for one job are rejected to prevent energy-based
+selection. Each accepted row retains its own session's idle subtraction. The
+final metadata maps every job to its source session and records exclusions,
+source hashes and the combined calibration. The latest session idle is used only
+for the subsequent immediate demo, explicitly identified in metadata.
