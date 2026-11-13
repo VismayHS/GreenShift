@@ -11,7 +11,7 @@
 > *Case study: a data team wants to cut emissions from nightly jobs without missing deadlines. Measure the energy use of representative Spark jobs. Use public grid carbon-intensity data to shift flexible jobs to cleaner time windows. Report emissions saved and any added delay.*
 
 A job's emissions are its energy times the carbon intensity (CI) of the electricity it ran on:
-`gCO₂ = kWh × PUE × CI(t)`. Moving a job in time does not change its kWh; it changes `CI(t)`. Great Britain's grid CI varies by a factor of two or more within a night as wind, imports and gas plants change, and NESO publishes a 48-hour forecast of it every half-hour. GreenShift uses that forecast to choose, every night, when each batch job runs inside a fixed window (release 22:00, hard deadline 07:00 UK time), and reports how much CO₂ that saves against the team's current cron schedule and how much later each job finishes.
+`gCO₂ = kWh × PUE × CI(t)`. Moving a job in time does not change its kWh; it changes `CI(t)`. Great Britain's grid CI changes substantially within a night as wind, imports and gas plants change (on the median night of 2024-25 the dirtiest and cleanest half-hours differ by 48 gCO₂/kWh, about 1.5×, and by 2× or more on 18% of nights), and NESO publishes a 48-hour forecast of it every half-hour. GreenShift uses that forecast to choose, every night, when each batch job runs inside a fixed window (release 22:00, hard deadline 07:00 UK time), and reports how much CO₂ that saves against the team's current cron schedule and how much later each job finishes.
 
 The design follows and is compared with Wiesner et al., *Let's Wait Awhile* (Middleware '21), which found GB savings of 4.3% (±2 h window) and 7.4% (±8 h) for a 30-minute nightly job in 2020.
 
@@ -109,7 +109,7 @@ DRAM (no counter on this CPU), SSD, network, fans, screen, power-supply losses a
 
 **Two rules that keep the results honest.** (1) *No lookahead:* policy functions receive only the forecast array; a test changes the actual values the scheduler must not see and checks that `api` plans are unchanged. (2) *Score on actual:* every gram is energy × the **actual** CI of the slots the job really occupied. Scoring on the forecast would inflate savings.
 
-**Guarantees, tested** (49 tests, all passing on Windows and macOS): no deadline is missed and capacity is never exceeded on random workloads; each job gets exactly its slots and total energy equals P0; a flat CI gives exactly 0 saving; best-window equals brute force for one job; a hand-checked two-job case; DST nights; RAPL counter wrap; missing API fields. An **independent auditor** (`scheduler/verification.py`) re-derives every row of the backtest from the slot table: 437,448 rows, 0 deadline misses, 0 capacity violations, energy conserved.
+**Guarantees, tested** (50 tests, all passing; the suite has been run on Windows, macOS and Linux): no deadline is missed and capacity is never exceeded on random workloads; each job gets exactly its slots and total energy equals P0; a flat CI gives exactly 0 saving; best-window equals brute force for one job; a hand-checked two-job case; DST nights; RAPL counter wrap; missing API fields. An **independent auditor** (`scheduler/verification.py`) re-derives every row of the backtest from the slot table: 437,448 rows, 0 deadline misses, 0 capacity violations, energy conserved.
 
 ## 5. Experimental setup
 
@@ -207,7 +207,7 @@ Run the paper's way, our ±2 h result is 4.45% and its 95% interval contains the
 ```bash
 python3.12 -m venv .venv && source .venv/bin/activate     # Windows: .venv\Scripts\activate
 pip install -r requirements-dev.txt
-python scripts/run_all.py --skip-measure                   # tests, backtest, audit, report, site data (~70 s)
+python scripts/run_all.py --skip-measure                   # tests, backtest, audit, report, site data, notebook (1-3 min)
 cd frontend && npm install && npm run dev                  # website
 python scripts/run_scheduler.py --dry-run                  # tonight's plan, live forecast
 ```

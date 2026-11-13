@@ -1,0 +1,149 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 700" width="1280" height="700" font-family="Inter, 'Segoe UI', Helvetica, Arial, sans-serif">
+  <title>GreenShift architecture</title>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#4a5568"/>
+    </marker>
+    <style>
+      .h { font-size: 14px; font-weight: 700; fill: #1a202c; }
+      .t { font-size: 12.5px; fill: #2d3748; }
+      .m { font-size: 12px; fill: #2d3748; font-family: 'JetBrains Mono', Consolas, Menlo, monospace; }
+      .lane { font-size: 12px; font-weight: 700; letter-spacing: 1.5px; fill: #718096; }
+      .src { fill: #edf2f7; stroke: #a0aec0; }
+      .ing { fill: #e6fffa; stroke: #319795; }
+      .core { fill: #f0fff4; stroke: #2f855a; }
+      .inner { fill: #ffffff; stroke: #68d391; }
+      .out { fill: #fffaf0; stroke: #dd6b20; }
+      .orc { fill: #ebf4ff; stroke: #4c51bf; }
+      .a { stroke: #4a5568; stroke-width: 1.6; fill: none; marker-end: url(#arrow); }
+    </style>
+  </defs>
+  <rect width="1280" height="700" fill="#ffffff"/>
+  <text x="30" y="38" font-size="22" font-weight="700" fill="#1a202c">GreenShift architecture</text>
+  <text x="30" y="60" class="t">Carbon-aware scheduling of nightly Spark batch jobs on the GB grid (release 22:00, hard deadline 07:00 UK, 30-min UTC grid)</text>
+
+  <!-- column labels -->
+  <text x="30" y="92" class="lane">DATA SOURCES</text>
+  <text x="290" y="92" class="lane">INGEST AND MEASURE</text>
+  <text x="560" y="92" class="lane">SCHEDULER CORE</text>
+  <text x="900" y="92" class="lane">OUTPUTS</text>
+
+  <!-- sources -->
+  <rect class="src" x="30" y="104" width="220" height="76" rx="8"/>
+  <text x="44" y="128" class="h">GB Carbon Intensity API</text>
+  <text x="44" y="148" class="t">NESO · forecast + actual</text>
+  <text x="44" y="166" class="t">30 min · CC BY 4.0 · no key</text>
+
+  <rect class="src" x="30" y="196" width="220" height="62" rx="8"/>
+  <text x="44" y="220" class="h">NESO generation mix</text>
+  <text x="44" y="240" class="t">independent cross-check</text>
+
+  <rect class="src" x="30" y="318" width="220" height="76" rx="8"/>
+  <text x="44" y="342" class="h">TPC-DS (DuckDB dsdgen)</text>
+  <text x="44" y="362" class="t">synthetic retail warehouse</text>
+  <text x="44" y="380" class="t">99 SQL queries · 5 jobs</text>
+
+  <rect class="src" x="30" y="410" width="220" height="62" rx="8"/>
+  <text x="44" y="434" class="h">Intel RAPL counters</text>
+  <text x="44" y="454" class="t">CPU-package energy (J)</text>
+
+  <!-- ingest / measure -->
+  <rect class="ing" x="290" y="104" width="230" height="154" rx="8"/>
+  <text x="304" y="128" class="h">Carbon data</text>
+  <text x="304" y="150" class="m">fetch_carbon_data.py</text>
+  <text x="304" y="168" class="t">2024-25, national + 7 regions</text>
+  <text x="304" y="192" class="m">carbon/clean.py</text>
+  <text x="304" y="210" class="t">full 30-min UTC grid, gap flags</text>
+  <text x="304" y="234" class="m">eda_carbon.py</text>
+  <text x="304" y="250" class="t">EDA summary + figures</text>
+
+  <rect class="ing" x="290" y="318" width="230" height="154" rx="8"/>
+  <text x="304" y="342" class="h">Energy measurement</text>
+  <text x="304" y="364" class="m">workloads/spark_jobs.py</text>
+  <text x="304" y="382" class="t">Spark 4.2, local mode</text>
+  <text x="304" y="406" class="m">energy/ · measure_jobs.py</text>
+  <text x="304" y="424" class="t">minus idle power, 5 runs per job</text>
+  <text x="304" y="446" class="m">measurements.csv</text>
+  <text x="304" y="463" class="t">accepted only if CV &lt; 10%</text>
+
+  <!-- scheduler core -->
+  <rect class="core" x="560" y="104" width="300" height="430" rx="10"/>
+  <text x="574" y="126" class="m" fill="#276749">src/carbonsched/scheduler/</text>
+
+  <rect class="inner" x="574" y="138" width="272" height="56" rx="6"/>
+  <text x="586" y="160" class="h">Size jobs · sizing.py</text>
+  <text x="586" y="181" class="t">length (30-min slots) and energy</text>
+
+  <rect class="inner" x="574" y="204" width="272" height="56" rx="6"/>
+  <text x="586" y="226" class="h">Decision signal · forecast.py</text>
+  <text x="586" y="247" class="t">api · noisy (10 seeds) · oracle</text>
+
+  <rect class="inner" x="574" y="270" width="272" height="94" rx="6"/>
+  <text x="586" y="292" class="h">Policies · policies.py</text>
+  <text x="586" y="313" class="t">P0 cron baseline · P2 best window</text>
+  <text x="586" y="332" class="t">P3 interruptible · P4 greedy</text>
+  <text x="586" y="351" class="t">EDF check: all jobs fit by 07:00</text>
+
+  <rect class="inner" x="574" y="374" width="272" height="76" rx="6"/>
+  <text x="586" y="396" class="h">Backtest · simulator.py</text>
+  <text x="586" y="417" class="t">729 nights × policy × forecast × k</text>
+  <text x="586" y="436" class="t">scored on ACTUAL intensity</text>
+
+  <rect class="inner" x="574" y="460" width="272" height="62" rx="6"/>
+  <text x="586" y="482" class="h">Audit · verification.py</text>
+  <text x="586" y="503" class="t">deadlines, capacity, energy, grams</text>
+
+  <!-- outputs -->
+  <rect class="out" x="900" y="104" width="350" height="70" rx="8"/>
+  <text x="914" y="128" class="h">Results tables and figures</text>
+  <text x="914" y="148" class="m">build_report.py</text>
+  <text x="914" y="165" class="t">report/results_tables.md · report_summary.json</text>
+
+  <rect class="out" x="900" y="186" width="350" height="62" rx="8"/>
+  <text x="914" y="210" class="h">Results notebook</text>
+  <text x="914" y="230" class="m">notebooks/results.ipynb</text>
+
+  <rect class="out" x="900" y="260" width="350" height="70" rx="8"/>
+  <text x="914" y="284" class="h">Website (React + Vite, 8 pages)</text>
+  <text x="914" y="304" class="m">export_site_data.py → frontend/</text>
+  <text x="914" y="321" class="t">re-runs P4 in TypeScript, checked against Python</text>
+
+  <rect class="out" x="900" y="342" width="350" height="70" rx="8"/>
+  <text x="914" y="366" class="h">Tonight's plan (live planner)</text>
+  <text x="914" y="386" class="m">run_scheduler.py --dry-run</text>
+  <text x="914" y="403" class="t">live 48 h forecast → results/plans/plan_&lt;date&gt;.json</text>
+
+  <rect class="out" x="900" y="424" width="350" height="110" rx="8"/>
+  <text x="914" y="448" class="h">Documents</text>
+  <text x="914" y="469" class="t">report/technical_report.pdf (technical report)</text>
+  <text x="914" y="488" class="t">report/report.md (full savings report)</text>
+  <text x="914" y="507" class="t">MODEL_CARD.md · datacards/ (4 data cards)</text>
+  <text x="914" y="526" class="t">README.md: this diagram and setup steps</text>
+
+  <!-- arrows: sources to ingest/measure -->
+  <path class="a" d="M250,142 L288,142"/>
+  <path class="a" d="M250,227 L288,227"/>
+  <path class="a" d="M250,356 L288,356"/>
+  <path class="a" d="M250,441 L288,441"/>
+  <!-- ingest/measure to core -->
+  <path class="a" d="M520,232 L572,232"/>
+  <path class="a" d="M520,395 C548,395 548,166 572,166"/>
+  <!-- core internal flow -->
+  <path class="a" d="M710,194 L710,202"/>
+  <path class="a" d="M710,260 L710,268"/>
+  <path class="a" d="M710,364 L710,372"/>
+  <path class="a" d="M710,450 L710,458"/>
+  <!-- core to outputs -->
+  <path class="a" d="M860,139 L898,139"/>
+  <path class="a" d="M860,217 L898,217"/>
+  <path class="a" d="M860,295 L898,295"/>
+  <path class="a" d="M860,377 L898,377"/>
+  <path class="a" d="M860,479 L898,479"/>
+
+  <!-- orchestration band -->
+  <rect class="orc" x="30" y="566" width="1220" height="104" rx="10"/>
+  <text x="48" y="592" class="h">Reproducible pipeline · one command</text>
+  <text x="48" y="616" class="m" xml:space="preserve">python scripts/run_all.py --skip-measure      or      docker compose run --rm pipeline</text>
+  <text x="48" y="640" class="t">tests (pytest) → backtest → independent audit → report tables and figures → site data → tonight's plan → results notebook</text>
+  <text x="48" y="659" class="t">Committed data in, every number out: tables, figures, notebook, website data and tonight's plan.</text>
+</svg>

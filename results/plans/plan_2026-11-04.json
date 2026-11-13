@@ -128,5 +128,5 @@
   "execution": "planning only; no dispatch or waiting",
   "comparison": "forecast-based expectation, not measured avoided emissions",
   "historical_replay": true,
-  "created_at_utc": "2026-11-04T13:00:48.807761+00:00"
+  "created_at_utc": "2026-11-13T05:13:06.407981+00:00"
 }

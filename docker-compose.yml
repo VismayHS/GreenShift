@@ -1,0 +1,22 @@
+# Reproducible GreenShift pipeline.
+#
+#   docker compose run --rm pipeline     # every number in the report, notebook and site (offline, a few minutes)
+#   docker compose up --build site       # build the website and serve it on http://localhost:4173
+#
+# The pipeline writes its outputs into this checkout (mounted at /app) as your own user;
+# the site is built inside its own image from frontend/ and writes nothing to the checkout.
+services:
+  pipeline:
+    build: .
+    image: greenshift-pipeline
+    user: "${HOST_UID:-1000}:${HOST_GID:-1000}"   # Linux: HOST_UID=$(id -u) HOST_GID=$(id -g) if yours is not 1000
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: ["python", "scripts/run_all.py", "--skip-measure", "--offline"]
+
+  site:
+    build: ./frontend
+    image: greenshift-site
+    ports:
+      - "4173:4173"

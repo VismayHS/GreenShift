@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "run_date_utc": "2026-11-04T13:00:23.804203+00:00",
-  "git_commit": "8ef5a7aab3eed1e30043cf0958e92fa536043842",
+  "run_date_utc": "2026-11-13T05:12:20.196722+00:00",
+  "git_commit": "c1350551c7d64aa3a6bd81cae5c51b0d095ab300",
   "SCALE": null,
   "PUE": 1,
   "job_sizing": {
@@ -30884,5 +30884,5 @@
   "noise": "actual + independent Gaussian noise, sigma=0.05*annual mean actual; no clipping; seeds 0..9",
   "invariants_checked": "every emitted plan: exact slots, capacity, release, deadline, fixed job energy",
   "carbon_sha256": "2885f8c4c6659611d79744506f178f15fef88fc3d88bad9492bbcb1ad1920771",
-  "backtest_sha256": "abd7866b778b8aefce37686abd55df893537e88b293d6763b4f532142867729f"
+  "backtest_sha256": "b5454c0f944e0a73d0a03b3e505e6f969980d31cb0574e832ffba53740c06664"
 }

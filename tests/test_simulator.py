@@ -30,3 +30,19 @@ def test_actual_gap_skips_entire_night():
     frame,meta,_=run_backtest(data,sizes,cfg,{"pue":1})
     assert frame.empty
     assert meta["nights_skipped"][0]["reason"]=="actual_gap"
+
+def test_backtest_runs_outside_a_git_checkout(monkeypatch):
+    import subprocess
+    from carbonsched.scheduler import simulator
+    def no_git(*args, **kwargs):
+        raise FileNotFoundError("git")
+    monkeypatch.setattr(simulator.subprocess, "check_output", no_git)
+    assert simulator._git_commit() is None
+    def not_a_repo(*args, **kwargs):
+        raise subprocess.CalledProcessError(128, args[0])
+    monkeypatch.setattr(simulator.subprocess, "check_output", not_a_repo)
+    sizes=[{"name":"a","duration_slots":1,"energy_kwh":0.1,"interruptible":False}]
+    cfg={"start":"2024-01-02","end":"2024-01-03","policies":["P0","P2"],
+         "forecast_modes":["api"],"seeds":[0],"capacity_k":[1]}
+    _,meta,_=run_backtest(fixture_data(),sizes,cfg,{"scale":1,"pue":1})
+    assert meta["git_commit"] is None

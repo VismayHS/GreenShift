@@ -27,6 +27,15 @@ COLUMNS = [
 KEY = ["night", "scenario", "region", "policy", "forecast_mode", "seed", "window_h", "capacity_k", "job"]
 
 
+def _git_commit() -> str | None:
+    """Commit the backtest was run from; None outside a git checkout (e.g. a zip copy)."""
+    try:
+        return subprocess.check_output(["git","rev-parse","HEAD"],cwd=PROJECT_ROOT,text=True,
+                                       stderr=subprocess.DEVNULL).strip()
+    except (OSError, subprocess.CalledProcessError):
+        return None
+
+
 def scenarios(night: date, sizes, config):
     release, deadline = night_window(night)
     yield "nightly", float("nan"), make_jobs(sizes, release, deadline), release, deadline
@@ -95,7 +104,7 @@ def run_backtest(data: pd.DataFrame, sizes: list[dict], config: dict,
     frame=pd.DataFrame.from_records(records,columns=COLUMNS)
     meta={
         "schema_version":1, "run_date_utc":datetime.now(timezone.utc).isoformat(),
-        "git_commit":subprocess.check_output(["git","rev-parse","HEAD"],cwd=PROJECT_ROOT,text=True).strip(),
+        "git_commit":_git_commit(),
         "SCALE":size_meta.get("scale"), "PUE":size_meta["pue"], "job_sizing":size_meta,
         "config":config, "resolved_jobs":sizes, "nights_used":used, "nights_skipped":skipped,
         "nights_used_count":len({r["night"] for r in used}),
