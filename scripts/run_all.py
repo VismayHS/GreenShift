@@ -8,6 +8,7 @@ Steps, in order:
   5. report       scripts/build_report.py -> report/results_tables.md, report/figures/res_*.png
   6. site data    scripts/export_site_data.py (+ the 48 h forecast unless --offline)
   7. demo plan    scripts/run_scheduler.py --dry-run --offline, the reference the site checks itself against
+  8. notebook     re-executes notebooks/results.ipynb, which recomputes the headline from the raw backtest
 
 Where results go: with an accepted results/measurements.csv the backtest is written to results/
 (measured). Without one it goes to results/validation_placeholder/ and every output says PLACEHOLDER.
@@ -21,6 +22,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import importlib.util
 import json
 import platform
 import subprocess
@@ -63,6 +65,15 @@ def tests() -> None:
         sys.exit(f"{summary['failed']} test(s) failed; fix them before publishing results")
 
 
+def notebook() -> None:
+    """Re-execute notebooks/results.ipynb against the new outputs (needs requirements-dev.txt)."""
+    if importlib.util.find_spec("nbconvert") is None or importlib.util.find_spec("ipykernel") is None:
+        print("\n=== notebook: skipped (pip install -r requirements-dev.txt to re-execute it)", flush=True)
+        return
+    step("notebook", ["-m", "nbconvert", "--to", "notebook", "--execute", "--inplace",
+                      "--log-level=ERROR", "notebooks/results.ipynb"])
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--skip-measure", action="store_true", help="use the committed results/measurements.csv (if any)")
@@ -92,6 +103,7 @@ def main() -> None:
         old.unlink()
     step("demo plan", ["scripts/run_scheduler.py", "--dry-run", "--offline"])
     step("site data", ["scripts/export_site_data.py", "--offline"])
+    notebook()
 
     s = json.loads((RESULTS / "report_summary.json").read_text())
     print(f"\n{'=' * 72}\nGreenShift results ({s['status'].upper()} job sizes), {s['nights_nightly']} nights, "
@@ -106,6 +118,7 @@ def main() -> None:
     print("\nOutputs:")
     for p in [out / "backtest.parquet", out / "verification.json", RESULTS / "report_summary.json",
               ROOT / "report/results_tables.md", ROOT / "report/figures", ROOT / "frontend/public/data",
+              ROOT / "notebooks/results.ipynb",
               *sorted((RESULTS / "plans").glob("plan_*.json"))]:
         print(f"  {p.relative_to(ROOT)}")
     print(f"\nDone in {time.time() - start:.0f} s. Site: cd frontend && npm install && npm run dev")

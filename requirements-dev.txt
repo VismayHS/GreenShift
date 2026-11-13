@@ -1,2 +1,8 @@
 -r requirements.txt
 pytest>=8
+# results notebook (notebooks/results.ipynb), executed by scripts/run_all.py
+nbconvert>=7
+nbformat>=5
+ipykernel>=6
+# scripts/build_docs.py (Markdown -> PDF for the report and cards)
+markdown>=3.5

@@ -1,9 +1,9 @@
 {
   "status": "placeholder",
-  "generated_utc": "2026-11-04T13:00Z",
+  "generated_utc": "2026-11-13T05:13Z",
   "source_dir": "results/validation_placeholder",
-  "backtest_sha256": "abd7866b778b8aefce37686abd55df893537e88b293d6763b4f532142867729f",
-  "git_commit": "8ef5a7aab3eed1e30043cf0958e92fa536043842",
+  "backtest_sha256": "b5454c0f944e0a73d0a03b3e505e6f969980d31cb0574e832ffba53740c06664",
+  "git_commit": "c1350551c7d64aa3a6bd81cae5c51b0d095ab300",
   "rows": 437448,
   "nights_nightly": 729,
   "nights_wiesner": 730,
@@ -1217,16 +1217,16 @@
         "oracle_g": 374554.0
       }
     ],
-    "backtest_sha256": "abd7866b778b8aefce37686abd55df893537e88b293d6763b4f532142867729f"
+    "backtest_sha256": "b5454c0f944e0a73d0a03b3e505e6f969980d31cb0574e832ffba53740c06664"
   },
   "tests": {
-    "passed": 49,
+    "passed": 50,
     "failed": 0,
     "skipped": 0,
-    "total": 49,
-    "platform": "Darwin arm64",
-    "python": "3.12.7",
-    "duration_s": 1.6,
-    "ran_at_utc": "2026-11-04T12:59Z"
+    "total": 50,
+    "platform": "Linux x86_64",
+    "python": "3.12.3",
+    "duration_s": 1.7,
+    "ran_at_utc": "2026-11-13T05:10Z"
   }
 }
